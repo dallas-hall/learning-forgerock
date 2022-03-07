@@ -106,9 +106,13 @@ The problem with this session approach is that a user needs session information 
 
 ![openam-sso.png](openam-sso.png)
 
-**Multi-Factor Authentication (MFA)** is an optional use case, multiple MFA approaches are supported.
+**Multi-Factor Authentication (MFA)** is an optional use case, multiple MFA approaches are supported. This could be a one time password or code, an external authenticator app, etc.
+
+![am-mfa.png](am-mfa.png)
 
 Personalisation can be applied after a user logins and is stored in the user profile, typically stored in the **ForgeRock Directory Server (DS)**.
+
+![am-personalisation.png](am-personalisation.png)
 
 When attempting to access an application gated by ForgeRock AM, a redirect from the application to ForgeRock AM is made and the authentication is attempted. If successful, the user is redirected back to the application and is authenticated within it.
 
