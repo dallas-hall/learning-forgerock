@@ -142,12 +142,31 @@ FR AM can cater for a variety of identity entities, the main ones are:
 * **Customers** - this is used for the organisation's customers on the internet, an untrusted network. This is used to handle typical customer use cases like needing high scalabilty for high demand.
 * **Things** - this is used for IoT devices which needs to use authentication methods that aren't username and password based.
 
-![am-auth-players.png](am-auth-players.png)
-
 FR AM can be configured to:
 * Allow a user to chose what type of authentication to use.
 * Allow multiple types of authentication, e.g. an easy authentication path for a user's known device but then escalate to a harder authentication path when the user uses a an unknown device.
 * Configure different authentication paths for different applications.
+
+![am-auth-players.png](am-auth-players.png)
+
+FR AM uses Authentication Trees filled with Authentication Nodes to create the authentication pathway. Each Authentication Node represents a single task and it contains the logic to perform the task it represents. Authenitcation Trees usually start with a Start node and finish with either a Success or Failure node. You can write your own Authenitcation Nodes with Java or using scripting.
+
+In the example below the enter credentials node is asking for the username and password on the same page, but you could separate this across multiple pages.
+
+![am-auth-tree.png](am-auth-tree.png)
+
+FR AM authentication trees can have a variety of configurations, such as loops, branching, and decisions via user input. In the example below:
+* Looping is used to allow the user to try their password up to the 3 failures.
+* A user chooses which MFA method to use.
+* Branching is used to control the execution flow after the user's MFA choice.
+
+![am-intel-auth-tree.png](am-intel-auth-tree.png)
+
+There is a drag and drop GUI called the Tree Designer which you can use to created authentication trees. The authentication nodes are grouped in topics on the left hand side of the GUI.
+
+FR AM can allow users to register themselves and FR AM will send a REST API request to **ForgeRock Identity Manager (IM)** which will provision the user. This is why Identity Management is within the Tree Designer GUI.
+
+![am-auth-tree-designer.png](am-auth-tree-designer.png)
 
 ### 3 - CONTROLLING ACCESS TO AN APPLICATION WITH AM AUTHORIZATION
 
