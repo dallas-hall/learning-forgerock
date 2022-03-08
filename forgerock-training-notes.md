@@ -122,7 +122,32 @@ OAuth2 or OIDC is used instead for SSO with internet facing applications. The `I
 
 ### 2 - PROTECTING AN APPLICATION WITH INTELLIGENT AUTHENTICATION
 
+When a user wants to access a resource that is gated by **ForgeRock Identity Gateway (IG)**, the ForgeRock web agent, or ForgeRock Java agent, their request is intercepted and forwarded to log into ForgeRock AM so they can be authenticated. The credentials provided by the user to FR AM could be:
+* Username and password,
+* One time code or password,
+* Tapping a button on a mobile device,
+* Biometric, etc.
 
+Once the user is authenticated an SSO token is returned by FR AM through the browser of the user or the application itself. The SSO token could be:
+* A clientside session cookie from a web policy agent,
+* A SAML assertion,
+* An OIDC token, etc.
+
+The returned SSO token is used to authenticate the user and allow access to the resource from the initial request. The user is only authenticated if the SSO token can be validated. There are many ways to validate an SSO token.
+
+![am-intelligent-auth.png](am-intelligent-auth.png)
+
+FR AM can cater for a variety of identity entities, the main ones are:
+* **Workforce** - this is used for the organisation's employees on a trusted internal network. This is used to handle typical employee use cases like SSO.
+* **Customers** - this is used for the organisation's customers on the internet, an untrusted network. This is used to handle typical customer use cases like needing high scalabilty for high demand.
+* **Things** - this is used for IoT devices which needs to use authentication methods that aren't username and password based.
+
+![am-auth-players.png](am-auth-players.png)
+
+FR AM can be configured to:
+* Allow a user to chose what type of authentication to use.
+* Allow multiple types of authentication, e.g. an easy authentication path for a user's known device but then escalate to a harder authentication path when the user uses a an unknown device.
+* Configure different authentication paths for different applications.
 
 ### 3 - CONTROLLING ACCESS TO AN APPLICATION WITH AM AUTHORIZATION
 
