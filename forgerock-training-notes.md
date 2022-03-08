@@ -80,9 +80,9 @@ The ForgeRock **Access Management (AM)** aims to provide:
 
 ![am-overview.png](am-overview.png)
 
-ForgeRock AM can talk to external systems via the user's browser via OAuth2, OIDC, or SAML2 to utilise a user's existing third party authenticaion mechanisms like their social media account.
+ForgeRock AM can talk to external systems via the user's browser via OAuth2, **OpenID Connect (OIDC)**, or SAML2 to utilise a user's existing third party authenticaion mechanisms like their social media account.
 
-![protecting-apps-with-openam.png](protecting-apps-with-openam.png)
+![protecting-apps-with-am.png](protecting-apps-with-am.png)
 
 ForgeRock AM can use the following for authentication:
 * Identity Gateway can be a reverse proxy handling authentication between the user and the requested resource.
@@ -92,7 +92,7 @@ ForgeRock AM can use the following for authentication:
 * Identity Edge Controller for IoT devices.
 * Various SDKs can be leveraged to provide authentication (e.g. Android or IOS SDKs for mobile devices or JavaScript SDK for a JavaScript webapp running in the browser)
 
-![integrating-apps-with-openam.png](integrating-apps-with-openam.png)
+![integrating-apps-with-am.png](integrating-apps-with-am.png)
 
 The traditional problem of webapps was once a user authenticated the authentication was lost on the serverside. This was solved by:
 * A serverside object called a session is used to keep a user's authentication state persistant.
@@ -104,7 +104,7 @@ ForgeRock AM can utilise the session approach to keep users authenticated and pr
 
 The problem with this session approach is that a user needs session information for every service they are accessing. Without an AM tool, they will need to sign in to each service individually. This is a poor user experience. SSO fixes this problem by having a user sign into an AM tool once, and the session from the AM tool is used to sign into all the services is it linked to. So from the user perspective they only have to sign in once and can access multiple services.
 
-![openam-sso.png](openam-sso.png)
+![am-sso.png](am-sso.png)
 
 **Multi-Factor Authentication (MFA)** is an optional use case, multiple MFA approaches are supported. This could be a one time password or code, an external authenticator app, etc.
 
@@ -116,9 +116,9 @@ Personalisation can be applied after a user logins and is stored in the user pro
 
 When attempting to access an application gated by ForgeRock AM, a redirect from the application to ForgeRock AM is made and the authentication is attempted. If successful, the user is redirected back to the application and is authenticated within it.
 
-`IPlanetDirectoryPro` cookie is the most important clientside cookie as it has the authentication session from ForgeRock AM. This cookie is always sent to ForgeRock AM with each request so ForgeRock AM knows the user is still authenticated. ForgeRock AM will check to see if that session is still valid. This approach is useful when you have full control of the network and want SSO, but isn't desireable for internet facing applications.
+`IPlanetDirectoryPro` cookie is the most important clientside cookie as it has the authentication session from ForgeRock AM. This cookie is always sent to ForgeRock AM with each request so ForgeRock AM knows the user is still authenticated. ForgeRock AM will check to see if that session is still valid. This approach is useful when you have full control of the network and want SSO, but isn't desireable for internet facing applications. When you don't have control of the network another approach like OAuth2 or OIDC.
 
-OAuth2 or OpenID Connect is used instead for SSO with internet facing applications. This is held in the `am-auth-jwt` cookie. The cookie contents could be decoded in a JWT application, you can encrypt it to protect against this. This cookie is not sent to ForgeRock AM and cannot be set by ForgeRock AM, so it must be set by the application itself.
+OAuth2 or OIDC is used instead for SSO with internet facing applications. The `IPlanetDirectoryPro` cookie is held in the `am-auth-jwt` cookie. The cookie contents could be decoded in a JWT application, you can encrypt it to protect against this. This cookie is not sent to ForgeRock AM and cannot be set by ForgeRock AM, so it must be set by the application itself. A web policy agent is typically used to set this cookie.
 
 ### 2 - PROTECTING AN APPLICATION WITH INTELLIGENT AUTHENTICATION
 
