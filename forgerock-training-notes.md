@@ -164,9 +164,49 @@ FR AM authentication trees can have a variety of configurations, such as loops, 
 
 There is a drag and drop GUI called the Tree Designer which you can use to created authentication trees. The authentication nodes are grouped in topics on the left hand side of the GUI.
 
+![am-auth-tree-designer.png](am-auth-nodes-v2.png)
+
 FR AM can allow users to register themselves and FR AM will send a REST API request to **ForgeRock Identity Manager (IM)** which will provision the user. This is why Identity Management is within the Tree Designer GUI.
 
 ![am-auth-tree-designer.png](am-auth-tree-designer.png)
+
+There are plenty of different authentication nodes:
+* The Zero Page Login Collector nodes checks  the username and password supplied in the HTTP header fields.
+* The LDAP Decision node can be used to authenticate against an LDAP or Active Directory server.
+* There is a variety of social media authentication nodes (e.g. Google and Facebook)
+* There is a SAML authentication node to delegate to another service for SAML authentication.
+* Terms & Conditions Decision node forces a user to accept terms and condition and store that in their profile.
+
+You can:
+
+* Add Timer nodes to your authentication tree flows to store how long it takes for users to log in. This can be used later for decision making (e.g. an attack bot is trying to log in quicker than the user normally does)
+* Ask a user to confirm their email address via the authentication tree flow.
+* Use many more nodes not described here.
+
+![am-auth-tree-designer.png](am-auth-nodes-v2.png)
+
+FR AM supports MFA, which is requiring the user to supply 2 or more different forms of credentials. The typical set up is providing a username and password for the HTTPS connection and then providing a timed based password **one time password (OTP)** from an authenitcator app (e.g. Authy has a numeric token updating every minute that is synced with the app).
+
+MFA can be requested by FR AM all the time, or only when user privilege escalation is required, or a new device is being used by the user, or other scenarios.
+
+ForgeRock supply an MFA authenticator app that can be rebranded with your organisation's logos and integratable with your applications. The OTPs are supplied using **hash-based message authentication codes (HMAC)**. There are 3 approaches (https://crypto.stackexchange.com/a/205):
+
+1. **Encrypt-then-MAC** = Encrypt the plaintext, MAC the ciphertext + iv then append it to the ciphertext. *This is typically used.*
+2. **MAC-then-Encrypt** = MAC the plaintext then append the MAC to the plaintext then Encrypt it all.
+3. **Encrypt-and-MAC** = Encrypt and MAC the plaintext then append the MAC onto the ciphertext.
+
+![hmac.png](hmac.png)
+
+![am-hmac-otp.png](am-hmac-otp.png)
+
+FR AM uses a service to implement pushing OTPs and other authentcation methods to registered user devices. The user must register their device.
+
+![am-push-otp.png](am-push-otp.png)
+
+**Web authentication (WebAuthn)** outservices authentication to an external services (e.g. Yubikey) via the WebAuthn standard.
+
+![am-webauthn.png](am-webauthn.png)
+
 
 ### 3 - CONTROLLING ACCESS TO AN APPLICATION WITH AM AUTHORIZATION
 
