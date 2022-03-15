@@ -164,11 +164,11 @@ FR AM authentication trees can have a variety of configurations, such as loops, 
 
 There is a drag and drop GUI called the Tree Designer which you can use to created authentication trees. The authentication nodes are grouped in topics on the left hand side of the GUI.
 
-![am-auth-tree-designer.png](am-auth-nodes-v2.png)
-
-FR AM can allow users to register themselves and FR AM will send a REST API request to **ForgeRock Identity Manager (IM)** which will provision the user. This is why Identity Management is within the Tree Designer GUI.
+![am-auth-nodes-v1.png](am-auth-nodes-v1.png)
 
 ![am-auth-tree-designer.png](am-auth-tree-designer.png)
+
+FR AM can allow users to register themselves and FR AM will send a REST API request to **ForgeRock Identity Manager (IM)** which will provision the user. This is why Identity Management is within the Tree Designer GUI.
 
 There are plenty of different authentication nodes:
 * The Zero Page Login Collector nodes checks  the username and password supplied in the HTTP header fields.
@@ -183,7 +183,17 @@ You can:
 * Ask a user to confirm their email address via the authentication tree flow.
 * Use many more nodes not described here.
 
-![am-auth-tree-designer.png](am-auth-nodes-v2.png)
+![am-auth-nodes-v2.png](am-auth-nodes-v2.png)
+
+Click on an authenication tree object to see its configuration options.
+
+![am-auth-nodes-v3.png](am-auth-nodes-v3.png)
+
+You can nest trees by using the Inner Tree Evaluator.
+
+![am-nested-tree-v1.png](am-nested-tree-v1.png)
+
+![am-nested-tree-v2.png](am-nested-tree-v2.png)
 
 FR AM supports MFA, which is requiring the user to supply 2 or more different forms of credentials. The typical set up is providing a username and password for the HTTPS connection and then providing a timed based password **one time password (OTP)** from an authenitcator app (e.g. Authy has a numeric token updating every minute that is synced with the app).
 
@@ -207,6 +217,7 @@ FR AM uses a service to implement pushing OTPs and other authentcation methods t
 
 ![am-webauthn.png](am-webauthn.png)
 
+Users will not directly log into FR AM, they will try to log into an application which will forward them to the FR AM and the correct authentication tree. You can configure FR AM to only allow specific authentication trees for an application.
 
 ### 3 - CONTROLLING ACCESS TO AN APPLICATION WITH AM AUTHORIZATION
 
