@@ -34,7 +34,7 @@ Autonomous Identity engine can use existing identity stores (e.g. Active Directo
 ForgeRock uses Kubernetes for its cloud based solutions. This is optional.
 The example company in the training is an online streaming service that charges customers for access. The architecture is pictured below.
 
-![forgerock-example-company-architecture.png](forgerock-example-company-architecture.png)
+![images/forgerock-example-company-architecture.png](images/forgerock-example-company-architecture.png)
 
 Identity version 7 has the following new features that are useful for us:
 * Better support for 'impersonate user'
@@ -52,7 +52,7 @@ The Common Auditing Frameworks handles auditing for all products.
 
 The new version uses Prometheus and Grafana for monitoring. You can view this stack below. Dashboards are already provided.
 
-![prometheus-and-grafana-stack.png](prometheus-and-grafana-stack.png)
+![images/prometheus-and-grafana-stack.png](images/prometheus-and-grafana-stack.png)
 
 ## ACCESS MANAGEMENT ESSENTIALS
 
@@ -78,11 +78,11 @@ The ForgeRock **Access Management (AM)** aims to provide:
 * Highly scalable and highly availability.
   * If your authentication service is done then all other downstream services are down. This is one of the most critical pieces in your service architecture.
 
-![am-overview.png](am-overview.png)
+![images/am-overview.png](images/am-overview.png)
 
 ForgeRock AM can talk to external systems via the user's browser via OAuth2, **OpenID Connect (OIDC)**, or SAML2 to utilise a user's existing third party authenticaion mechanisms like their social media account.
 
-![protecting-apps-with-am.png](protecting-apps-with-am.png)
+![images/protecting-apps-with-am.png](images/protecting-apps-with-am.png)
 
 ForgeRock AM can use the following for authentication:
 * Identity Gateway can be a reverse proxy handling authentication between the user and the requested resource.
@@ -92,7 +92,7 @@ ForgeRock AM can use the following for authentication:
 * Identity Edge Controller for IoT devices.
 * Various SDKs can be leveraged to provide authentication (e.g. Android or IOS SDKs for mobile devices or JavaScript SDK for a JavaScript webapp running in the browser)
 
-![integrating-apps-with-am.png](integrating-apps-with-am.png)
+![images/integrating-apps-with-am.png](images/integrating-apps-with-am.png)
 
 The traditional problem of webapps was once a user authenticated the authentication was lost on the serverside. This was solved by:
 * A serverside object called a session is used to keep a user's authentication state persistant.
@@ -104,15 +104,15 @@ ForgeRock AM can utilise the session approach to keep users authenticated and pr
 
 The problem with this session approach is that a user needs session information for every service they are accessing. Without an AM tool, they will need to sign in to each service individually. This is a poor user experience. SSO fixes this problem by having a user sign into an AM tool once, and the session from the AM tool is used to sign into all the services is it linked to. So from the user perspective they only have to sign in once and can access multiple services.
 
-![am-sso.png](am-sso.png)
+![images/am-sso.png](images/am-sso.png)
 
 **Multi-Factor Authentication (MFA)** is an optional use case, multiple MFA approaches are supported. This could be a one time password or code, an external authenticator app, etc.
 
-![am-mfa.png](am-mfa.png)
+![images/am-mfa.png](images/am-mfa.png)
 
 Personalisation can be applied after a user logins and is stored in the user profile, typically stored in the **ForgeRock Directory Server (DS)**.
 
-![am-personalisation.png](am-personalisation.png)
+![images/am-personalisation.png](images/am-personalisation.png)
 
 When attempting to access an application gated by ForgeRock AM, a redirect from the application to ForgeRock AM is made and the authentication is attempted. If successful, the user is redirected back to the application and is authenticated within it.
 
@@ -135,7 +135,7 @@ Once the user is authenticated an SSO token is returned by FR AM through the bro
 
 The returned SSO token is used to authenticate the user and allow access to the resource from the initial request. The user is only authenticated if the SSO token can be validated. There are many ways to validate an SSO token.
 
-![am-intelligent-auth.png](am-intelligent-auth.png)
+![images/am-intelligent-auth.png](images/am-intelligent-auth.png)
 
 FR AM can cater for a variety of identity entities, the main ones are:
 * **Workforce** - this is used for the organisation's employees on a trusted internal network. This is used to handle typical employee use cases like SSO.
@@ -147,26 +147,26 @@ FR AM can be configured to:
 * Allow multiple types of authentication, e.g. an easy authentication path for a user's known device but then escalate to a harder authentication path when the user uses a an unknown device.
 * Configure different authentication paths for different applications.
 
-![am-auth-players.png](am-auth-players.png)
+![images/am-auth-players.png](images/am-auth-players.png)
 
 FR AM uses Authentication Trees filled with Authentication Nodes to create the authentication pathway. Each Authentication Node represents a single task and it contains the logic to perform the task it represents. Authenitcation Trees usually start with a Start node and finish with either a Success or Failure node. You can write your own Authenitcation Nodes with Java or using scripting.
 
 In the example below the enter credentials node is asking for the username and password on the same page, but you could separate this across multiple pages.
 
-![am-auth-tree.png](am-auth-tree.png)
+![images/am-auth-tree.png](images/am-auth-tree.png)
 
 FR AM authentication trees can have a variety of configurations, such as loops, branching, and decisions via user input. In the example below:
 * Looping is used to allow the user to try their password up to the 3 failures.
 * A user chooses which MFA method to use.
 * Branching is used to control the execution flow after the user's MFA choice.
 
-![am-intel-auth-tree.png](am-intel-auth-tree.png)
+![images/am-intel-auth-tree.png](images/am-intel-auth-tree.png)
 
 There is a drag and drop GUI called the Tree Designer which you can use to created authentication trees. The authentication nodes are grouped in topics on the left hand side of the GUI.
 
-![am-auth-nodes-v1.png](am-auth-nodes-v1.png)
+![images/am-auth-nodes-v1.png](images/am-auth-nodes-v1.png)
 
-![am-auth-tree-designer.png](am-auth-tree-designer.png)
+![images/am-auth-tree-designer.png](images/am-auth-tree-designer.png)
 
 FR AM can allow users to register themselves and FR AM will send a REST API request to **ForgeRock Identity Manager (IM)** which will provision the user. This is why Identity Management is within the Tree Designer GUI.
 
@@ -183,17 +183,17 @@ You can:
 * Ask a user to confirm their email address via the authentication tree flow.
 * Use many more nodes not described here.
 
-![am-auth-nodes-v2.png](am-auth-nodes-v2.png)
+![images/am-auth-nodes-v2.png](images/am-auth-nodes-v2.png)
 
 Click on an authenication tree object to see its configuration options.
 
-![am-auth-nodes-v3.png](am-auth-nodes-v3.png)
+![images/am-auth-nodes-v3.png](images/am-auth-nodes-v3.png)
 
 You can nest trees by using the Inner Tree Evaluator.
 
-![am-nested-tree-v1.png](am-nested-tree-v1.png)
+![images/am-nested-tree-v1.png](images/am-nested-tree-v1.png)
 
-![am-nested-tree-v2.png](am-nested-tree-v2.png)
+![images/am-nested-tree-v2.png](images/am-nested-tree-v2.png)
 
 FR AM supports MFA, which is requiring the user to supply 2 or more different forms of credentials. The typical set up is providing a username and password for the HTTPS connection and then providing a timed based password **one time password (OTP)** from an authenitcator app (e.g. Authy has a numeric token updating every minute that is synced with the app).
 
@@ -205,24 +205,49 @@ ForgeRock supply an MFA authenticator app that can be rebranded with your organi
 2. **MAC-then-Encrypt** = MAC the plaintext then append the MAC to the plaintext then Encrypt it all.
 3. **Encrypt-and-MAC** = Encrypt and MAC the plaintext then append the MAC onto the ciphertext.
 
-![hmac.png](hmac.png)
+![images/hmac.png](images/hmac.png)
 
-![am-hmac-otp.png](am-hmac-otp.png)
+![images/am-hmac-otp.png](images/am-hmac-otp.png)
 
 FR AM uses a service to implement pushing OTPs and other authentcation methods to registered user devices. The user must register their device.
 
-![am-push-otp.png](am-push-otp.png)
+![images/am-push-otp.png](images/am-push-otp.png)
 
 **Web authentication (WebAuthn)** outservices authentication to an external services (e.g. Yubikey) via the WebAuthn standard.
 
-![am-webauthn.png](am-webauthn.png)
+![images/am-webauthn.png](images/am-webauthn.png)
 
 Users will not directly log into FR AM, they will try to log into an application which will forward them to the FR AM and the correct authentication tree. You can configure FR AM to only allow specific authentication trees for an application.
 
 ### 3 - CONTROLLING ACCESS TO AN APPLICATION WITH AM AUTHORIZATION
 
+AM entitlement management (i.e authorisation) dictates:
+* **Who** can
+  * Subject
+* **Do** something
+  * Action
+* To **something**
+  * Resource
+* With specific **constraints**
+  * Conditions
+
+The above is the basic premise of ABAC and RBAC.
+
+FR AM has a typical work flow.
+* An user tries to access a resource. The user may or may not already be authenticated.
+* The user's request is intercepted by a **policy enforcement point (PEP)**
+* The PEP forwards the user's request onto a **policy decision point (PDP)**
+* The PDP performs user authorisation and returns the result.
+
+![images/am-authorisation-v1.png](images/am-authorisation-v1.png)
+
+![images/am-authorisation-v2.png](images/am-authorisation-v2.png)
+
+![]()
+
 ### 4 - PROTECTING REST APIS AND INTEGRATING MOBILE APPLICATIONS WITH OAUTH2-BASED PROTOCOLS
 
+![]()
 
 ## Identity Management Essentials
 
