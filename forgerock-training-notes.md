@@ -12,13 +12,17 @@
   - [Directory Services Essentials](#directory-services-essentials)
   - [Identity Gateway Essentials](#identity-gateway-essentials)
 
+
+
 ## ALL
+
+Training can be found at https://backstage.forgerock.com/university/cloud-learning
 
 ### INTRODUCTION MODULE
 
 Intro video is the same in all 4 classes.
-ForgeRock products are used to help secure internet facing services through authenticaiton. They are meant to be as simple, frictionless, and as secure as possible.
-3 different types of identities are being catered for this ForgeRock.
+ForgeRock products are used to help secure internet facing services through authentication. They are meant to be as simple, frictionless, and as secure as possible.
+3 different types of identities are being catered for by ForgeRock.
 1. Consumers
 2. Employees
 3. Services / things
@@ -68,29 +72,29 @@ The ForgeRock **Access Management (AM)** aims to provide:
 * An easy authentication journey for users, because they may need to reauthenticate later after the initial authentication.
 * The ability to use multiple devices (e.g. mobile or laptop) for accessing the protected services.
 * Various levels of authentication from simple username and password all the way up to multiple layers of authentication.
-* The optional ability to leverage a user's existing third party authenticaion mechanisms (e.g. social media like Google and Facebook or in house **Active Diretory (AD)**) so the user doesn't need another account.
+* The optional ability to leverage a user's existing third party authenticaion mechanisms (e.g. social media like Google and Facebook or in house **Active Diretory (AD)** so the user doesn't need another account.
 * Giving context-aware **Single Sign On (SSO)** access. Some examples are:
   * The user's typicaly location.
   * The user's typical login times.
   * The user's typical device.
 * Respecting user privacy and data.
 * Using Zero Trust security model.
-* Highly scalable and highly availability.
-  * If your authentication service is done then all other downstream services are down. This is one of the most critical pieces in your service architecture.
+* Highly scalable and **high availability (HA)**.
+  * If your authentication service is down then all other downstream services are down. This is one of the most critical pieces in your service architecture.
 
 ![images/am-overview.png](images/am-overview.png)
 
-ForgeRock AM can talk to external systems via the user's browser via OAuth2, **OpenID Connect (OIDC)**, or SAML2 to utilise a user's existing third party authenticaion mechanisms like their social media account.
+ForgeRock AM can talk to external systems via the user's browser via **Open Authorization 2.0 (OAuth2)**, **OpenID Connect (OIDC)**, or **Security Assertion Markup Language 2.0 (SAML2)** to utilise a user's existing third party authenticaion mechanisms like their social media account.
 
 ![images/protecting-apps-with-am.png](images/protecting-apps-with-am.png)
 
 ForgeRock AM can use the following for authentication:
-* Identity Gateway can be a reverse proxy handling authentication between the user and the requested resource.
+* **ForgeRock Identity Gateway (IG)** can be a reverse proxy handling authentication between the user and the requested resource.
   * This can be used to replace a legacy application's authentication method.
 * Java agents for Java apps.
 * Web agents for websites.
-* Identity Edge Controller for IoT devices.
-* Various SDKs can be leveraged to provide authentication (e.g. Android or IOS SDKs for mobile devices or JavaScript SDK for a JavaScript webapp running in the browser)
+* Identity Edge Controller for **Internet of Things (IoT)** devices.
+* Various **software development kits (SDKs)** can be leveraged to provide authentication. E.g. Android or IOS SDKs for mobile devices or JavaScript SDK for a JavaScript webapp running in the browser.
 
 ![images/integrating-apps-with-am.png](images/integrating-apps-with-am.png)
 
@@ -116,13 +120,13 @@ Personalisation can be applied after a user logins and is stored in the user pro
 
 When attempting to access an application gated by ForgeRock AM, a redirect from the application to ForgeRock AM is made and the authentication is attempted. If successful, the user is redirected back to the application and is authenticated within it.
 
-`IPlanetDirectoryPro` cookie is the most important clientside cookie as it has the authentication session from ForgeRock AM. This cookie is always sent to ForgeRock AM with each request so ForgeRock AM knows the user is still authenticated. ForgeRock AM will check to see if that session is still valid. This approach is useful when you have full control of the network and want SSO, but isn't desireable for internet facing applications. When you don't have control of the network another approach like OAuth2 or OIDC.
+`IPlanetDirectoryPro` cookie is the most important clientside cookie as it has the authentication session from ForgeRock AM. This cookie is always sent to ForgeRock AM with each request so ForgeRock AM knows the user is still authenticated. ForgeRock AM will check to see if that session is still valid. This approach is useful when you have full control of the network and want SSO, but isn't desireable for internet facing applications. When you don't have control of the network use another approach like OAuth2 or OIDC.
 
 OAuth2 or OIDC is used instead for SSO with internet facing applications. The `IPlanetDirectoryPro` cookie is held in the `am-auth-jwt` cookie. The cookie contents could be decoded in a JWT application, you can encrypt it to protect against this. This cookie is not sent to ForgeRock AM and cannot be set by ForgeRock AM, so it must be set by the application itself. A web policy agent is typically used to set this cookie.
 
 ### 2 - PROTECTING AN APPLICATION WITH INTELLIGENT AUTHENTICATION
 
-When a user wants to access a resource that is gated by **ForgeRock Identity Gateway (IG)**, the ForgeRock web agent, or ForgeRock Java agent, their request is intercepted and forwarded to log into ForgeRock AM so they can be authenticated. The credentials provided by the user to FR AM could be:
+When a user wants to access a resource that is gated by ForgeRock IG, the ForgeRock web agent, or ForgeRock Java agent, their request is intercepted and forwarded to log into ForgeRock AM so they can be authenticated. The credentials provided by the user to FR AM could be:
 * Username and password,
 * One time code or password,
 * Tapping a button on a mobile device,
@@ -149,7 +153,7 @@ FR AM can be configured to:
 
 ![images/am-auth-players.png](images/am-auth-players.png)
 
-FR AM uses Authentication Trees filled with Authentication Nodes to create the authentication pathway. Each Authentication Node represents a single task and it contains the logic to perform the task it represents. Authenitcation Trees usually start with a Start node and finish with either a Success or Failure node. You can write your own Authenitcation Nodes with Java or using scripting.
+FR AM uses **Authentication Trees** filled with **Authentication Nodes** to create the authentication pathway. Each Authentication Node represents a single task and it contains the logic to perform the task it represents. Authenitcation Trees usually start with a Start node and finish with either a Success or Failure node. You can write your own Authenitcation Nodes with Java or using scripting.
 
 In the example below the enter credentials node is asking for the username and password on the same page, but you could separate this across multiple pages.
 
@@ -162,7 +166,7 @@ FR AM authentication trees can have a variety of configurations, such as loops, 
 
 ![images/am-intel-auth-tree.png](images/am-intel-auth-tree.png)
 
-There is a drag and drop GUI called the Tree Designer which you can use to created authentication trees. The authentication nodes are grouped in topics on the left hand side of the GUI.
+There is a drag and drop GUI called the **Tree Designer** which you can use to created authentication trees. The authentication nodes are grouped in topics on the left hand side of the GUI.
 
 ![images/am-auth-nodes-v1.png](images/am-auth-nodes-v1.png)
 
@@ -199,10 +203,10 @@ FR AM supports MFA, which is requiring the user to supply 2 or more different fo
 
 MFA can be requested by FR AM all the time, or only when user privilege escalation is required, or a new device is being used by the user, or other scenarios.
 
-ForgeRock supply an MFA authenticator app that can be rebranded with your organisation's logos and integratable with your applications. The OTPs are supplied using **hash-based message authentication codes (HMAC)**. There are 3 approaches (https://crypto.stackexchange.com/a/205):
+ForgeRock supply an MFA authenticator app that can be rebranded with your organisation's logos and integratable with your applications. The OTPs are supplied using **hash-based message authentication codes (HMAC)**. There are 3 approaches (https://crypto.stackexchange.com/a/205) and each have pros and cons:
 
-1. **Encrypt-then-MAC** = Encrypt the plaintext, MAC the ciphertext + iv then append it to the ciphertext. *This is typically used.*
-2. **MAC-then-Encrypt** = MAC the plaintext then append the MAC to the plaintext then Encrypt it all.
+1. **Encrypt-then-MAC** = Encrypt the plaintext, MAC the ciphertext + IV, and then append it to the ciphertext. *This is typically used.*
+2. **MAC-then-Encrypt** = MAC the plaintext then append the MAC to the plaintext then encrypt it all.
 3. **Encrypt-and-MAC** = Encrypt and MAC the plaintext then append the MAC onto the ciphertext.
 
 ![images/hmac.png](images/hmac.png)
@@ -222,19 +226,19 @@ Users will not directly log into FR AM, they will try to log into an application
 ### 3 - CONTROLLING ACCESS TO AN APPLICATION WITH AM AUTHORIZATION
 
 AM entitlement management (i.e authorisation) dictates:
-* **Who** can
+* **Who** can...
   * Subject
-* **Do** something
+* **Do** something...
   * Action
-* To **something**
+* To **something**...
   * Resource
-* With specific **constraints**
+* With specific **constraints**.
   * Conditions
 
-The above is the basic premise of ABAC and RBAC.
+The above is the basic premise of **attribute based access control (ABAC)** and **role based access control (RBAC)**. [ABAC v RBAC](https://www.okta.com/au/identity-101/role-based-access-control-vs-attribute-based-access-control/)
 
 FR AM has a typical work flow.
-* An user tries to access a resource. The user may or may not already be authenticated.
+* A user tries to access a resource. The user may or may not already be authenticated.
 * The user's request is intercepted by a **policy enforcement point (PEP)**
 * The PEP forwards the user's request onto a **policy decision point (PDP)**
 * The PDP performs user authorisation and returns the result.
@@ -243,11 +247,7 @@ FR AM has a typical work flow.
 
 ![images/am-authorisation-v2.png](images/am-authorisation-v2.png)
 
-![]()
-
 ### 4 - PROTECTING REST APIS AND INTEGRATING MOBILE APPLICATIONS WITH OAUTH2-BASED PROTOCOLS
-
-![]()
 
 ## Identity Management Essentials
 
