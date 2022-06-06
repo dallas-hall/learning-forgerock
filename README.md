@@ -3,9 +3,9 @@
 - [ForgeRock Training](#forgerock-training)
   - [INTRODUCTION MODULE](#introduction-module)
   - [ACCESS MANAGEMENT ESSENTIALS](#access-management-essentials)
-  - [Identity Management Essentials](#identity-management-essentials)
-  - [Directory Services Essentials](#directory-services-essentials)
-  - [Identity Gateway Essentials](#identity-gateway-essentials)
+  - [IDENTITY MANAGEMENT ESSENTIALS](#identity-management-essentials)
+  - [DIRECTORY SERVICES ESSENTIALS](#directory-services-essentials)
+  - [IDENTITY GATEWAY ESSENTIALS](#identity-gateway-essentials)
 
 Training can be found at https://backstage.forgerock.com/university/cloud-learning
 
@@ -53,14 +53,14 @@ The new version uses Prometheus and Grafana for monitoring. You can view this st
 
 Can be viewed at [forgerock-am-training-notes.md](forgerock-am-training-notes.md)
 
-## Identity Management Essentials
+## IDENTITY MANAGEMENT ESSENTIALS
 
-TODO
+Can be viewed at [forgerock-im-training-notes.md](forgerock-im-training-notes.md)
 
-## Directory Services Essentials
+## DIRECTORY SERVICES ESSENTIALS
 
-TODO
+Can be viewed at [forgerock-ds-training-notes.md](forgerock-ds-training-notes.md)
 
-## Identity Gateway Essentials
+## IDENTITY GATEWAY ESSENTIALS
 
-TODO
+Can be viewed at [forgerock-ig-training-notes.md](forgerock-ig-training-notes.md)
