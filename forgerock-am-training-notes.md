@@ -1,7 +1,7 @@
 # ForgeRock Access Management
 
 - [ForgeRock Access Management](#forgerock-access-management)
-  - [1 - INTRODUCTION](#1---introduction)
+  - [1 - FORGEROCK INTRODUCTION MODULE](#1---forgerock-introduction-module)
   - [2 - INTRODUCING AM CORE CONCEPTS](#2---introducing-am-core-concepts)
   - [3 - PROTECTING AN APPLICATION WITH INTELLIGENT AUTHENTICATION](#3---protecting-an-application-with-intelligent-authentication)
   - [4 - CONTROLLING ACCESS TO AN APPLICATION WITH AM AUTHORIZATION](#4---controlling-access-to-an-application-with-am-authorization)
@@ -9,7 +9,7 @@
   - [6 - IMPROVING SECURITY WITH A ZERO TRUST APPROACH](#6---improving-security-with-a-zero-trust-approach)
   - [7 - INTEGRATING WITH THIRD-PARTY SAML2 ENTITIES](#7---integrating-with-third-party-saml2-entities)
 
-## 1 - INTRODUCTION
+## 1 - FORGEROCK INTRODUCTION MODULE
 
 The introduction applies to all AM products, it can be viewed at [README.md](README.md#introduction-module)
 
