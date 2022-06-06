@@ -1,66 +1,19 @@
-# ForgeRock Training
+# ForgeRock Access Management
 
-- [ForgeRock Training](#forgerock-training)
-  - [ALL](#all)
-    - [INTRODUCTION MODULE](#introduction-module)
-  - [ACCESS MANAGEMENT ESSENTIALS](#access-management-essentials)
-    - [1 - INTRODUCING AM CORE CONCEPTS](#1---introducing-am-core-concepts)
-    - [2 - PROTECTING AN APPLICATION WITH INTELLIGENT AUTHENTICATION](#2---protecting-an-application-with-intelligent-authentication)
-    - [3 - CONTROLLING ACCESS TO AN APPLICATION WITH AM AUTHORIZATION](#3---controlling-access-to-an-application-with-am-authorization)
-    - [4 - PROTECTING REST APIS AND INTEGRATING MOBILE APPLICATIONS WITH OAUTH2-BASED PROTOCOLS](#4---protecting-rest-apis-and-integrating-mobile-applications-with-oauth2-based-protocols)
-  - [Identity Management Essentials](#identity-management-essentials)
-  - [Directory Services Essentials](#directory-services-essentials)
-  - [Identity Gateway Essentials](#identity-gateway-essentials)
+- [ForgeRock Access Management](#forgerock-access-management)
+  - [1 - INTRODUCTION](#1---introduction)
+  - [2 - INTRODUCING AM CORE CONCEPTS](#2---introducing-am-core-concepts)
+  - [3 - PROTECTING AN APPLICATION WITH INTELLIGENT AUTHENTICATION](#3---protecting-an-application-with-intelligent-authentication)
+  - [4 - CONTROLLING ACCESS TO AN APPLICATION WITH AM AUTHORIZATION](#4---controlling-access-to-an-application-with-am-authorization)
+  - [5 - PROTECTING REST APIS AND INTEGRATING MOBILE APPLICATIONS WITH OAUTH2-BASED PROTOCOLS](#5---protecting-rest-apis-and-integrating-mobile-applications-with-oauth2-based-protocols)
+  - [6 - IMPROVING SECURITY WITH A ZERO TRUST APPROACH](#6---improving-security-with-a-zero-trust-approach)
+  - [7 - INTEGRATING WITH THIRD-PARTY SAML2 ENTITIES](#7---integrating-with-third-party-saml2-entities)
 
+## 1 - INTRODUCTION
 
+The introduction applies to all AM products, it can be viewed at [README.md](README.md#introduction-module)
 
-## ALL
-
-Training can be found at https://backstage.forgerock.com/university/cloud-learning
-
-### INTRODUCTION MODULE
-
-Intro video is the same in all 4 classes.
-ForgeRock products are used to help secure internet facing services through authentication. They are meant to be as simple, frictionless, and as secure as possible.
-3 different types of identities are being catered for by ForgeRock.
-1. Consumers
-2. Employees
-3. Services / things
-
-There are 4 parts to ForgeRock's solution.
-1. Identity management
-2. Access management
-3. Universal storage directory
-4. Identity governance
-
-ForgeRock's trust network uses other vendor's tools in their solution. E.g. Google authentication. You can optionally use this.
-Autonomous Identity engine can use existing identity stores (e.g. Active Directory) to expediate already authenticated users access to other systems.
-ForgeRock uses Kubernetes for its cloud based solutions. This is optional.
-The example company in the training is an online streaming service that charges customers for access. The architecture is pictured below.
-
-![images/forgerock-example-company-architecture.png](images/forgerock-example-company-architecture.png)
-
-Identity version 7 has the following new features that are useful for us:
-* Better support for 'impersonate user'
-* Seamless SSO for Windows using Kerberos
-* Improved PKI authentication experience
-* Improved WebAuthN experience
-* Easier SAML administration via REST API or an administration UI
-* The directory service was rewritten for k8s support but it is also easier to use in general.
-
-ForgeRock supports using Docker and k8s for its containerised applications.
-The Common Auditing Frameworks handles auditing for all products.
-* It uses either JSON or CSV files.
-* It is compatible with Splunk.
-* Each audit event is given a unique transaction ID. Use this ID to follow the sequence of events of that activity, even across multiple audit logs (but you need to configure this option).
-
-The new version uses Prometheus and Grafana for monitoring. You can view this stack below. Dashboards are already provided.
-
-![images/prometheus-and-grafana-stack.png](images/prometheus-and-grafana-stack.png)
-
-## ACCESS MANAGEMENT ESSENTIALS
-
-### 1 - INTRODUCING AM CORE CONCEPTS
+## 2 - INTRODUCING AM CORE CONCEPTS
 
 All access management solutions need to:
 * Identify who the user is. This is called **Authentication**.
@@ -124,7 +77,7 @@ When attempting to access an application gated by ForgeRock AM, a redirect from 
 
 OAuth2 or OIDC is used instead for SSO with internet facing applications. The `IPlanetDirectoryPro` cookie is held in the `am-auth-jwt` cookie. The cookie contents could be decoded in a JWT application, you can encrypt it to protect against this. This cookie is not sent to ForgeRock AM and cannot be set by ForgeRock AM, so it must be set by the application itself. A web policy agent is typically used to set this cookie.
 
-### 2 - PROTECTING AN APPLICATION WITH INTELLIGENT AUTHENTICATION
+## 3 - PROTECTING AN APPLICATION WITH INTELLIGENT AUTHENTICATION
 
 When a user wants to access a resource that is gated by ForgeRock IG, the ForgeRock web agent, or ForgeRock Java agent, their request is intercepted and forwarded to log into ForgeRock AM so they can be authenticated. The credentials provided by the user to FR AM could be:
 * Username and password,
@@ -223,7 +176,7 @@ FR AM uses a service to implement pushing OTPs and other authentcation methods t
 
 Users will not directly log into FR AM, they will try to log into an application which will forward them to the FR AM and the correct authentication tree. You can configure FR AM to only allow specific authentication trees for an application.
 
-### 3 - CONTROLLING ACCESS TO AN APPLICATION WITH AM AUTHORIZATION
+## 4 - CONTROLLING ACCESS TO AN APPLICATION WITH AM AUTHORIZATION
 
 AM entitlement management (i.e authorisation) dictates:
 * **Who** can...
@@ -247,11 +200,14 @@ FR AM has a typical work flow.
 
 ![images/am-authorisation-v2.png](images/am-authorisation-v2.png)
 
-### 4 - PROTECTING REST APIS AND INTEGRATING MOBILE APPLICATIONS WITH OAUTH2-BASED PROTOCOLS
+## 5 - PROTECTING REST APIS AND INTEGRATING MOBILE APPLICATIONS WITH OAUTH2-BASED PROTOCOLS
 
-## Identity Management Essentials
+TODO
 
-## Directory Services Essentials
+## 6 - IMPROVING SECURITY WITH A ZERO TRUST APPROACH
 
-## Identity Gateway Essentials
+TODO
 
+## 7 - INTEGRATING WITH THIRD-PARTY SAML2 ENTITIES
+
+TODO
