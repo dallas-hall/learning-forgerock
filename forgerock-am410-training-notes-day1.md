@@ -7,7 +7,12 @@
     - [Realms](#realms)
     - [Authentication Lifecycle](#authentication-lifecycle)
     - [Intelligent Authentication](#intelligent-authentication)
+    - [Lab Notes](#lab-notes)
+      - [Setup](#setup)
+      - [Realms](#realms-1)
   - [Lesson 2 - Protecting A Website With IG](#lesson-2---protecting-a-website-with-ig)
+    - [Lab Notes](#lab-notes-1)
+      - [IG](#ig)
   - [Lesson 3 - Controlling Access](#lesson-3---controlling-access)
 
 ## Lab Environment Setup
@@ -304,6 +309,81 @@ The process of adding a script to a tree involves:
    1. Use your script, myTreeScript, as shown in the example.
    2. Define outcomes that match those returned by the script.
 
+### Lab Notes
+
+#### Setup
+
+Run `st-setlab-env.sh` once to set it up.
+
+To install and configure AM, you need to have an application server installed. In this class, you work with a pre-installed instance of Apache Tomcat (Tomcat).
+* A pre-installed instance of Tomcat is located in `/opt/tomcats/am` and is configured to listen on HTTP port `18080`.
+* The Tomcat instance has also been configured with SSL/TLS certificates for use in this course and listens to port `9443`.
+* The AM binaries have been downloaded and copied into the `/opt/forgerock/software` folder.
+* The `AM-7.1.0.war` file has been copied to the `/opt/tomcats/am/webapps` folder. This is using an embedded FR DS instance.
+* The name of the file is `login.war`. Note that there is also a sub-folder named `login` that is the expanded version of the `login.war` file, which is created when the application server is started and first discovers the presence of the `.war` file.  The URL is https://am.example.com:9443/login andd URL path `/ login` is derived from the name of the `.war` file located in the Tomcat `webapps` folder.
+
+```
+[forgerock@forgerock webapps]$ pwd
+/opt/tomcats/am/webapps
+[forgerock@forgerock webapps]$ tree -L 1
+.
+├── docs
+├── examples
+├── host-manager
+├── login <- the expanded login.war.
+├── login.war <- the file being used by Tomcat to serve AM. Renaming this would rename the URL path.
+├── manager
+└── ROOT
+
+6 directories, 1 file
+```
+
+* `/home/forgerock/.openamcfg ` contains the `am` configuration file which is `AMConfig_opt_tomcats_am_webapps_login_`
+* `/home/forgerock/login` contains files related to this AM instance, such as audit log files .e.g `/home/forgerock/login/var/audit`
+* Start AM with `/opt/tomcats/am/bin/startup.sh`
+* Look at the AM logs with `tail -f /opt/tomcats/am/logs/catalina.out`
+* Shutdown AM with `/opt/tomcats/am/bin/shutdown.sh 30 -force`
+  * The command tells Tomcat to try and shut down gracefully for 30 seconds. If the process cannot be closed after that period of time, it will kill the process.
+  * For the `shutdown.sh` command to work, a `setenv.sh` file already exists in the `/opt/ tomcats/am/bin` directory, with the `CATALINA_PID` variable defined in the file as `CATALINA_PID="$CATALINA_BASE/bin/catalina.pid"`
+  * `ps aux | grep tomcat` to view running Tomcat instances and `kill -9 $PID` to kill Tomcat if the `shutdown.sh` didn't work.
+
+#### Realms
+
+By using a DNS alias, you can authenticate to a realm by simply accessing a different fully qualified domain name (FQDN).
+
+Users reach the AM login page because another portal or application sends them there. Typically, users are redirected back to where they came from. In order to do so, the portal or application can use the `goto` URL parameter.
+
+You can view cookies in Developer Tools > Application > Storage > Cookies.
+
+When a user or the administrator logs in to AM, an internal session is created. That session is represented by a reference value called the SSOTokenID which is set in a cookie name that is:
+* Called `iPlanetDirectoryPro` by default. The name should be changed in a production configuration for security reasons.
+* Visible to the domain defined for your AM instance.
+
+The presence of the cookie in a browser is required by users to eliminate the need to authenticate again when they return to the AM login page and access:
+* Their profile page.
+* Any valid goto URL page.
+
+Setting a session cookie is the main technique used to protect access and provide **single sign-on (SSO)** to websites when using AM.
+
+The cookie called `amlbcookie` is used to keep track of the instance accessed in the context of a load-balanced environment.
+
+When you redirect to another site, your original site's session cookie is not displayed when the browser accesses another domain, because the cookie is configured as a domain-based cookie that is visible to the domain from which it was sent, and subdomains of the cookie domain. But the original site's cookie is still available in the browser and can be used when you return to that domain.
+
+Deleting the session cookie in your browser does not terminate a session.
+
+Anyone obtaining the session cookie value can gain access to the user's session. For that reason, all communication with AM must use SSL/TLS.
+
+The `LEAVING SITE` page, also called the `switchRealm` page (check the fragment name in the URL). It is a page displayed when a user is already authenticated to a realm and tries to access another one. This demonstrates that a user can only be logged in to one realm at a time. Most of the time users only belong to one realm and are only able to log in to one realm. If a user belongs to two realms, they have to choose who they wish to log in as.
+
+AM provides a setting that controls whether user profile attributes are displayed or not after successful authentication. The setting is also used to permit authentication in environments that do not define any identities. Set AM UI > Realm > Authentication > Settings > User Profile to `Ignored`.
+
+AM defines several default authentication methods in each realm;
+1. For administrative users to access the Admin UI.
+2. Foor end users to authenticate with the realm.\
+
+When accessing the AM login page without any service parameter in the URL, AM presents the default tree for authentication with the realm.
+
+
 ## Lesson 2 - Protecting A Website With IG
 
 Protecting resources or services involves the ability to:
@@ -348,7 +428,9 @@ When a user requests a page from the FEC website, IG intercepts the request and 
 
 ![images/am401/ig-clients-v5.png](images/am401/ig-clients-v5.png)
 
-If you decode the IG JWT token you will see the information above. One of the most relevant pieces of information is contained in the `ssotoken key`. The value of the field is the `SSOTokenId`, which is a reference to the session created after the user authenticated successfully with AM, and which is persisted in the AM CTS store. The token also contains information about the realm where authentication took place, a reference to the end user, the name of the edge client for whom the token was created, and so on.
+If you decode the IG JWT token you will see the information above. One of the most relevant pieces of information is contained in the `ssotoken` key. The value of the field is the `SSOTokenId`, which is a reference to the session created after the user authenticated successfully with AM, and which is persisted in the AM CTS store. The token also contains information about the realm where authentication took place, a reference to the end user, the name of the edge client for whom the token was created, and so on.
+
+This means that the `ssotoken` matches the value of the `iPlanetDirectoryPro` cookie value.
 
 ![images/am401/ig-clients-v6.png](images/am401/ig-clients-v6.png)
 
@@ -359,5 +441,20 @@ When IG finds the IG cookie, it needs to validate the SSO token it contains. To 
 ![images/am401/ig-clients-v7.png](images/am401/ig-clients-v7.png)
 
 To log out from an application, protected with IG integrated with AM, you must log out of AM. You can either integrate a link in your website, which accesses the AM logout page, or use functionality from IG.
+
+### Lab Notes
+
+#### IG
+
+In this course, IG is pre-configured to log the communication between IG and AM.
+Note that the logs do not contain the communication happening in the browser, instead the logs contain the direct communication between IG and AM's REST APIs. In a production environment, you should restrict the information collected in logs, for privacy reasons.
+
+Understanding IG in detail is beyond the scope of this course. The basic principle is that IG acts as a powerful reverse proxy in front of the application. IG intercepts requests and uses configuration files, called routes, to decide how to process the request.
+
+When IG receives a request, it goes through each of its routes until it finds a route that applies to the request, based on some conditions defined within the route. In the lab this was at ` /home/forgerock/.openig/config/routes`
+
+`/home/ forgerock/.openig/bin/env.sh` contains the values that IG uses on start up.
+
+`CrossDomainSingleSignOnFilter` is used when a protected application is not on the same domain as the AM domain.
 
 ## Lesson 3 - Controlling Access
