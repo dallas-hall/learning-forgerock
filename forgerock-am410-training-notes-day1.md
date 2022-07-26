@@ -11,9 +11,15 @@
       - [Setup](#setup)
       - [Realms](#realms-1)
   - [Lesson 2 - Protecting A Website With IG](#lesson-2---protecting-a-website-with-ig)
+    - [AM Edge Clients](#am-edge-clients)
+    - [IG](#ig)
+    - [Authenticate Identities With AM](#authenticate-identities-with-am)
     - [Lab Notes](#lab-notes-1)
-      - [IG](#ig)
+      - [IG](#ig-1)
   - [Lesson 3 - Controlling Access](#lesson-3---controlling-access)
+    - [Entitlement Management](#entitlement-management)
+    - [Lab Notes](#lab-notes-2)
+      - [Policies](#policies)
 
 ## Lab Environment Setup
 
@@ -31,7 +37,7 @@ Businesses offer services and resources to their users. Businesses typically use
 
 The **ForgeRock Access Management (FR AM)** tool provides authentication and authorisation. Once a user has successfully authenticated, FR AM maintains information about that user's session a server-side in a structure called an `SSOToken`. Users need to be authenticated to FR AM before they can access any services gated by FR AM.
 
-![images/am401/am-auth-v1.png](images/am401/am-auth-v1.png)
+![images/am401/am-auth-1.png](images/am401/am-auth-1.png)
 
 AM services are written in Java. The layers in this image are:
 
@@ -42,7 +48,7 @@ AM services are written in Java. The layers in this image are:
 
 ### Realms
 
-![images/am401/am-realm-v1.png](images/am401/am-realm-v1.png)
+![images/am401/am-realm-1.png](images/am401/am-realm-1.png)
 
 Realms:
 * Configure AM experiences according to groups of users.
@@ -58,7 +64,7 @@ Realms can configure:
 * Authorization
 * Applications (policy agents, OAuth 2.0 (OAuth2) clients, and federation)
 
-![images/am401/am-realm-v2.png](images/am401/am-realm-v2.png)
+![images/am401/am-realm-2.png](images/am401/am-realm-2.png)
 
 Realms can be used to create a specific user experience for a group of users. If a solution must be put in place for various sets of users, multiple realms can be created.
 
@@ -73,7 +79,7 @@ Subrealms:
   * Multiple subrealms are appropriate is the user population isn't a single community and requires a different FR AM experience per community.
 * Application owners can have access to their Subrealm through the FR AM UI to be able to configure it.
 
-![images/am401/am-realm-v3.png](images/am401/am-realm-v3.png)
+![images/am401/am-realm-3.png](images/am401/am-realm-3.png)
 
 The top level in the UI is for global configuration and the left side panel is for the currently selected Realm.
 
@@ -85,11 +91,11 @@ There are 2 ways to access a realm:
 
 ### Authentication Lifecycle
 
-![images/am401/am-auth-v2.png](images/am401/am-auth-v2.png)
+![images/am401/am-auth-2.png](images/am401/am-auth-2.png)
 
 When AM services are used as part of an access management solution, every protected resource will somehow need to authenticate the end user before they can access it. FR AM authentication is done through a series of REST API calls. This can be done through a user's browser or by an application using the REST API. The user's credentials are checked against the FR DS CTS and if they are valid a session is granted. Users will no longer need to authenticate to FR AM while they have a valid session. The `SSOToken` is a unique ID that stores a user session and is used by all AM systems. A `SSOTokenID` is given to the client. The `SSOTokenID` is either set as a cookie when using a browser, returned to the service in case of a REST call, or included in a JSON Web Token (JWT) when using **ForgeRock Identity Gateway (FR IG)** or a web agent.
 
-![images/am401/am-auth-v3.png](images/am401/am-auth-v3.png)
+![images/am401/am-auth-3.png](images/am401/am-auth-3.png)
 
 Users accessing AM or a resource protected by AM for the first time do not have an existing session and are called unauthenticated users. They will be required to authenticate with AM.
 
@@ -114,11 +120,11 @@ Every session has an enforced idle timeout and maximum lifetime:
 
 Timeouts can be configured globally, per realm, or per user through the session service.
 
-![images/am401/am-auth-v4.png](images/am401/am-auth-v4.png)
+![images/am401/am-auth-4.png](images/am401/am-auth-4.png)
 
 A session contains information to make access management decisions, such as the user's identity, authentication method, remaining session time, and the authentication realm.
 
-![images/am401/am-auth-v5.png](images/am401/am-auth-v5.png)
+![images/am401/am-auth-5.png](images/am401/am-auth-5.png)
 
 After authentication and AM creates a session, AM needs to communicate a reference about the session to any party that may need it, such as IG, web agents, and applications.
 
@@ -126,7 +132,7 @@ Where no browser is involved, AM returns the `SSOTokenID` directly; for example,
 
 `iPlanetDirectoryPro` cookie is the most important clientside cookie as it has the authentication session from ForgeRock AM. This cookie is always sent to ForgeRock AM with each request so ForgeRock AM knows the user is still authenticated. ForgeRock AM will check to see if that session is still valid. This approach is useful when you have full control of the network and want SSO, but isn't desireable for internet facing applications. When you don't have control of the network use another approach like OAuth2 or OIDC.
 
-![images/am401/am-auth-v6.png](images/am401/am-auth-v6.png)
+![images/am401/am-auth-6.png](images/am401/am-auth-6.png)
 
 AM can be configured to use one of the following two methods to keep track of the session:
 * A CTS-based session, which is stored in FR DS and is the default approach.
@@ -145,11 +151,11 @@ By default, the AM cookie is configured as domain cookie based on the AM **fully
 
 **Note:** By default the session cookie has the scope of a domain name. So in the brower's developer tools your session cookie is not displayed when the browser accesses another domain, because the cookie is configured as a domain-based cookie that is visible to the domain from which it was sent, and subdomains of the cookie domain. Once you return the previous domain your session cookie will be accessible again. When logging out the cookie is removed.
 
-![images/am401/am-auth-v7.png](images/am401/am-auth-v7.png)
+![images/am401/am-auth-7.png](images/am401/am-auth-7.png)
 
 When a cookie is set in the browser and the user returns to the AM login page, AM can read the cookie and validate it. If the validation is successful, AM can proceed with the flow. Otherwise, AM considers that the user is not authenticated and displays the login page again.
 
-![images/am401/am-auth-v8.png](images/am401/am-auth-v8.png)
+![images/am401/am-auth-8.png](images/am401/am-auth-8.png)
 
 Once authentication is successful, the end user may end up on different pages, depending on the context.
 
@@ -175,7 +181,7 @@ To access other `goto` and `gotoOnFail` URL values, add the URLs to the realm's 
 
 **GOTCHA:** AM requires that all goto redirection URLs are whitelisted in the access management Validation Service for the Realm.
 
-![images/am401/am-auth-v9.png](images/am401/am-auth-v9.png)
+![images/am401/am-auth-9.png](images/am401/am-auth-9.png)
 
 When you are logged into a Realm and try to access aother Realm that you are not logged into, you will see the page `LEAVING SITE`, also called the switchRealm page (check the fragment name in the URL). It is a page displayed when a user is already authenticated to a realm and tries to access another one. This demonstrates that a user can only be logged in to one realm at a time.
 
@@ -187,7 +193,7 @@ AM authentication mechanisms use:
   * The default tree for a given realm.
   * A tree specified in the URL by adding the `service=<tree-name>` parameter.
 
-![images/am401/am-auth-v2.png](images/am401/am-auth-v2.png)
+![images/am401/am-auth-2.png](images/am401/am-auth-2.png)
 
 When a user accesses the AM login page, AM looks into its configuration and starts a specific authentication process. To decide what that process is, AM takes into account the URL request and the parameters provided in the request.
 
@@ -204,7 +210,7 @@ AM uses:
 
 **Interactive authentication** is when the user is actively involved in the authentication process and is requested for credentials or a touch ID. A **non-interactive authentication** method uses credentials to authenticate the user, but the user does not have to manually supply said credentials. For example, the device profile could be used.
 
-![images/am401/am-trees-v1.png](images/am401/am-trees-v1.png)
+![images/am401/am-trees-1.png](images/am401/am-trees-1.png)
 
 A **tree** is an end-to-end workflow invoked by an end user or device. A tree is a collection of nodes combined to form an authentication process flow. Trees:
 * Defines an authentication process.
@@ -243,7 +249,7 @@ The authentication tree selected by AM is:
 * The URL parameters `authIndextype` and `authIndexValue;` for example, `authIndexType=service&authIndexValue=MyTree`.
 * The End User UI with the tree name added with the service parameter in the URL; for example: https://am.example.com/login/?realm=/alpha&service=MyTree#login
 
-![images/am401/am-trees-v2.png](images/am401/am-trees-v2.png)
+![images/am401/am-trees-2.png](images/am401/am-trees-2.png)
 
 The Tree editor:
 * Is a visual interface for creating and editing trees.
@@ -251,11 +257,11 @@ The Tree editor:
 * Provides a searchable list of nodes in the Nodes panel on the left.
 * Displays configurable properties, if any, for a selected node in the configuration panel on the right.
 
-![images/am401/am-trees-v3.png](images/am401/am-trees-v3.png)
+![images/am401/am-trees-3.png](images/am401/am-trees-3.png)
 
 A tree is called an inner tree when it is nested inside another tree by using an Inner Tree Evaluator node, which can be used by any number of other trees. So, if you modify an element in the inner tree, the change affects all the trees using it.
 
-![images/am401/am-nodes-v1.png](images/am401/am-nodes-v1.png)
+![images/am401/am-nodes-1.png](images/am401/am-nodes-1.png)
 
 AM nodes are grouped into the following categories:
 * Basic Authentication Nodes
@@ -275,7 +281,7 @@ The basic authentication nodes include:
 * Username Collector node: Prompts the user for their username.
 * Password Collector node: Prompts the user for their password.
 
-![images/am401/am-nodes-v2.png](images/am401/am-nodes-v2.png)
+![images/am401/am-nodes-2.png](images/am401/am-nodes-2.png)
 
 Collector nodes prompt for user input and device data, such as device profile, location, and certificates. Some collector nodes are also decision nodes. Most collector nodes have a single outcome, except the collectors that are also decision nodes. Most of these collector nodes require some additional configuration.
 
@@ -283,11 +289,11 @@ Collector nodes prompt for user input and device data, such as device profile, l
 * Recovery Code Collection Decision node: Collects a recovery code from the user and compares its hash to a hashed code belonging to the user.
 * Choice Collector node: Obtains a choice from the user whose value is one of the node outcomes.
 
-![images/am401/am-nodes-v3.png](images/am401/am-nodes-v3.png)
+![images/am401/am-nodes-3.png](images/am401/am-nodes-3.png)
 
 Any node outcome can be connected with the input of another node to form a loop mechanism. A node, such as a decision node, can have more than one outcome to provide a branch or alternate path to the flow. Inner Tree Evaluator nodes follow the logic defined in another tree.
 
-![images/am401/am-nodes-v4.png](images/am401/am-nodes-v4.png)
+![images/am401/am-nodes-4.png](images/am401/am-nodes-4.png)
 
 * The Page Node combines multiple nodes, such as the Username Collector node and Password Collector node, that request input into a single page for display to the user.
 * The Message Node displays a custom, localized message on the page, and can provide a localized positive and negative response that the user can select to proceed.
@@ -300,7 +306,7 @@ Any node outcome can be connected with the input of another node to form a loop 
 * The Retry Limit Decision node allows the specified number of passes through the Retry outcome path, before continuing along the Reject path.
 * The Success URL and Failure URL nodes set the redirection URL to be applied when authentication succeeds or fails, respectively.
 
-![images/am401/am-nodes-v5.png](images/am401/am-nodes-v5.png)
+![images/am401/am-nodes-5.png](images/am401/am-nodes-5.png)
 
 The process of adding a script to a tree involves:
 1. Navigating to SubRealm > Scripts.
@@ -386,6 +392,8 @@ When accessing the AM login page without any service parameter in the URL, AM pr
 
 ## Lesson 2 - Protecting A Website With IG
 
+### AM Edge Clients
+
 Protecting resources or services involves the ability to:
 * Intercept requests.
 * Instruct end users on how to obtain required access passes.
@@ -393,9 +401,11 @@ Protecting resources or services involves the ability to:
 * Evaluate their access rights.
 * Relay the request to the backend, when validation is successful.
 
-![images/am401/ig-clients-v1.png](images/am401/ig-clients-v1.png)
+![images/am401/ig-clients-1.png](images/am401/ig-clients-1.png)
 
 AM provides authentication, SSO, and policy functionality to enterprise applications. There are many different approaches to enterprise application integration. We will use **Forgerock Internet Gateway (FR IG)** to protect a website and demonstrate AM functionality.
+
+### IG
 
 IG is a standalone product used to offer web access management to all web applications, including legacy applications with built-in legacy authentication mechanisms. IG also offers SAML2 support to all applications, and is easy to integrate. IG can also support OIDC operations. IG replaces the old FR Java Web Agent.
 
@@ -412,35 +422,92 @@ FR IG offers:
 * Offers easy to integrate SAML2 support.
 * Supports OpenID Connect (OIDC) operations.
 
-![images/am401/ig-clients-v2.png](images/am401/ig-clients-v2.png)
+![images/am401/ig-clients-2.png](images/am401/ig-clients-2.png)
 
 As an authentication guardian, IG intercepts all the communication trying to reach the website. It will try to assess whether the request should be allowed to go through or not. A second functionality is that IG can relay user information to the website/backend application. IG can also verify if access can be granted for that user under current circumstances.
 
-![images/am401/ig-clients-v3.png](images/am401/ig-clients-v3.png)
+![images/am401/ig-clients-3.png](images/am401/ig-clients-3.png)
 
 IG must intercept all the access requests to protected resources. Typically, the architecture ensures that end users can access IG but cannot access the underlying resources directly. IG listens to the port, intercepts the request, and processes it based on its configuration
 
-![images/am401/ig-clients-v4.png](images/am401/ig-clients-v4.png)
+![images/am401/ig-clients-4.png](images/am401/ig-clients-4.png)
 
 When a user requests a page from the FEC website, IG intercepts the request and searches for the presence of a cookie, as defined in its configuration. If the cookie is present, IG decodes its value, retrieves the SSO token value, and communicates with AM to find out if the SSO token is valid.
 * If it is valid, IG proceeds with the flow.
 * If it is not valid, or if the cookie does not exist, IG redirects the user to AM for authentication.
 
-![images/am401/ig-clients-v5.png](images/am401/ig-clients-v5.png)
+![images/am401/ig-clients-5.png](images/am401/ig-clients-5.png)
 
 If you decode the IG JWT token you will see the information above. One of the most relevant pieces of information is contained in the `ssotoken` key. The value of the field is the `SSOTokenId`, which is a reference to the session created after the user authenticated successfully with AM, and which is persisted in the AM CTS store. The token also contains information about the realm where authentication took place, a reference to the end user, the name of the edge client for whom the token was created, and so on.
 
 This means that the `ssotoken` matches the value of the `iPlanetDirectoryPro` cookie value.
 
-![images/am401/ig-clients-v6.png](images/am401/ig-clients-v6.png)
+![images/am401/ig-clients-6.png](images/am401/ig-clients-6.png)
 
 When IG finds the IG cookie, it needs to validate the SSO token it contains. To do so, IG accesses the `.../am/json/realms/root/sessions?_action=getSessionInfo` endpoint of AM, providing the SSO token value in the request.
 * If the session is not valid, AM responds with a JSON message containing a `"valid":false` key/value pair.
 * If the session is valid, AM responds with a JSON message containing information about the session, as shown in the image above.
 
-![images/am401/ig-clients-v7.png](images/am401/ig-clients-v7.png)
+![images/am401/ig-clients-7.png](images/am401/ig-clients-7.png)
 
 To log out from an application, protected with IG integrated with AM, you must log out of AM. You can either integrate a link in your website, which accesses the AM logout page, or use functionality from IG.
+
+### Authenticate Identities With AM
+
+![](images/am401/am-identities-1.png)
+
+So far, you tested authentication with the `demo` user. The demo user is an identity created, by default, in AM. Users who want to access a resource protected by AM must be able to authenticate successfully with AM, even if they are not in the internal pool of users. This can be done using the LDAP Decision node.
+
+![](images/am401/am-identities-2.png)
+
+The LDAP Decision node configuration contains all the fields needed to set up the communication with the external LDAP Directory and to verify a user's credentials. One important feature of the LDAP Decision node is that it supports LDAP Behera Password Policies which are a feature of modern LDAP servers, such as DS.
+
+![](images/am401/am-identities-3.png)
+
+Because the LDAP Decision node supports Behera Password Policies, it is able to distinguish between more outcome than simply a successful or failed authentication. This means that trees using the LDAP Decision node can provide a better experience to end users. If the profile associated with the username and password is locked, or the password has expired, tree evaluation continues along the respective `Locked` or `Expired` outcome paths.
+
+Different paths can branch out from each outcome. For example, if the `Locked` outcome is triggered, the tree can present end users with a strong authentication alternative.
+
+Data Store Decision node:
+* For quick evaluation
+* Only available for internal identities
+* Generic for all LDAP directory types
+
+LDAP Decision node:
+* More specialized
+* Supports LDAP Behera Policies
+* Supports any LDAP directory: external or embedded
+
+There is a sample tree, called `Example`, that uses the Data Store Decision node.
+
+![](images/am401/am-identities-4.png)
+
+Identity is the heart of access management. When users try to access resources and are redirected to AM for authentication by IG, AM may need to have access to user information.
+
+![](images/am401/am-identities-5.png)
+
+Using a Java identity repository plugin, an AM identity store can do the following:
+* Connect to an external or embedded LDAP directory.
+* Understand the structure of the directory.
+* Search for a user in the directory based on an attribute.
+* Retrieve profile information about that user.
+
+Identity stores are required when user account data needs to be read or written. Most functionality you may need will be provided by the default implementation of the Java identity repository plugin. However, should you need further functionality, you can develop your own custom identity repository plugin using Java code.
+
+![](images/am401/am-identities-6.png)
+
+By default AM installs an embedded identity store, however, it is recommended that you use your own external identity store in production. The recommended external identity store is FR DS. Others are supported.
+
+* Identity stores are optional:
+  * Only required if you need user profile data.
+* Avoid creation of identities using the identity store:
+  * Limited functionality.
+  * Limited control over the creation flow.
+* Avoid having multiple identity stores within a realm:
+  * AM considers users with same uid as the same identity.
+  * AM creates new users and updates existing users in each identity stor
+
+Mapping identities into the realm is the norm for the majority of deployments, but it is an optional step. If no identity stores are configured, then AM can still authenticate a user, but no user profile data will be available.
 
 ### Lab Notes
 
@@ -457,4 +524,128 @@ When IG receives a request, it goes through each of its routes until it finds a 
 
 `CrossDomainSingleSignOnFilter` is used when a protected application is not on the same domain as the AM domain.
 
+
 ## Lesson 3 - Controlling Access
+
+### Entitlement Management
+
+![](images/am401/am-entitlement-1.png)
+
+**Entitlement management** is the part of access management that deals with permissions. i.e. Can this SUBJECT perform this ACTION on this RESOURCE under these CONDITIONS? AM provides a centralized authorization framework to manage entitlements.
+
+AM implements authorization with one or more policies defined in a policy set. Policy evaluation is a process based on the policies within a policy set, that determines if access to a resource is granted or denied.
+
+![](images/am401/am-pep-1.png)
+
+![](images/am401/am-pep-2.png)
+
+The **policy enforcement points (PEP)** is responsible for enforcing the access decision evaluated by the **policy decision point (PDP)**. AM acts as a PDP. IG acts as a PEP.
+
+![](images/am401/am-policy-sets-1.png)
+
+To evaluate policies, AM must first determine which set of policies should be taken into consideration. When configuring an authorization solution, an administrator defines all the policies required to protect an application or a service, and groups them into what is called a policy set. The policy set is defined within a specific realm.
+
+![](images/am401/am-policy-sets-2.png)
+
+Each policy has a unique name and consists of the following components:
+* Subjects: Identify the collection of users to whom the policy applies.
+* Actions: Specify operations that are allowed or denied when accessing a resource.
+* Resources: Represent the objects that are protected by the policy.
+* Conditions (Optional): Apply environmental constraints to the policy.
+
+Policies can also define response attributes to return a set of attributes with the policy decision to the PEP. A policy defines whether a subject can perform an action on a resource depending on some conditions.
+
+![](images/am401/am-policy-sets-3.png)
+
+Authorization is not possible without authentication. Authentication contains information about the user attempting to access a particular resource protected by the policy. AM uses this information to determine if the user is subject to the policy. If the user is subject to the policy, the user is either denied or allowed access.
+* Authenticated Users: This subject type implies that any user with a valid `SSOToken` is a member of this subject.
+* Users & Groups: User or group as defined in the Identities pages of the realm the policy is created in.
+* OpenID Connect/JWT Claim: Validates a claim within a JWT. This condition type only supports string equality comparisons and is case-sensitive.
+* Never Match: Doesn't match any subject. This has the effect of disabling the policy.
+
+![](images/am401/am-policy-sets-4.png)
+
+A resource type is a template for resources that policies must adhere to. The template contains patterns and actions:
+* Patterns: When defining a resource in a policy, it must match one of the patterns of the resource type.
+* Actions: A resource type also contains a set of actions that can be evaluated, and to which a value of Allow or Deny is associated.
+
+The URL resource type is the most commonly used and is shipped with AM. It lets you protect websites and web applications. The HTTP actions, such as GET and POST, are implemented by default. Can user other resource types like OAuth2.
+
+![](images/am401/am-policy-sets-5.png)
+
+When defining a resource within a policy, the resource must match an available pattern from the resource type.
+
+Wildcards can be used to match a group of similar resources. Note that the wildcard does not match the question mark '?' used at the end of a URL to mark the start of the query parameters. The question mark must be added explicitly to a resource to allow parameters.
+
+![](images/am401/am-policy-sets-6.png)
+
+Actions define which action is allowed or not allowed. If an action is absent, it is implicitly denied. When defining an action, you must associate a value to it to decide if it should be allowed or denied.
+
+Most of the time, you should develop solutions that do not need to set up an explicit deny.
+
+![](images/am401/am-policy-sets-7.png)
+
+![](images/am401/am-policy-sets-8.png)
+
+A policy environment condition allows constraints to be defined in the policy. The policy will only be applicable if the set of conditions are met, e.g. the user connects on the weekend.
+
+You can write your own scripted policy environment conditions to extend the prebuilt ones.
+
+![](images/am401/am-policy-sets-9.png)
+
+Subjects and environment conditions can be combined with logical operators. You can also nest logical operators, which gives full flexibility on how to define the pool of users and conditions.
+
+![](images/am401/am-policy-sets-10.png)
+
+The response attributes define information that AM attaches to a response following a policy decision, e.g. name or email address. They are typically used for customizing applications.
+
+![](images/am401/am-policy-sets-11.png)
+
+A PEP accesses AM authorization REST API for a specific realm. A PEP requests policy evaluation by providing AM with:
+* The policy set to evaluate
+* An `SSOTokenID` or JWT token for a subject
+* A resource value
+* Environment condition values
+
+![](images/am401/am-policy-sets-12.png)
+
+For every policy considered for evaluation, AM must come to a decision regarding the policy. Either the policy is relevant, and the decision for the specific policy must be taken into account, or the policy is irrelevant.
+
+For each of the policies, there will be a resource and a subject match. If either the subject or the resource does not match, the policy is irrelevant and no result will be recorded.
+
+If both the resource and the subject match, the conditions will be considered. If the condition is met, the policy applies and the value for each defined action will be recorded; either allow or deny.
+
+![](images/am401/am-policy-sets-13.png)
+
+Once all the results have been recorded, a combined decision is put together and sent to IG.
+
+If no policy is applicable (either because there was no resource or subject match, or conditions were not met on any of the policies), the decision will always be empty. Remember that, by default, IG does not let anyone in. If no explicit allow comes back to IG, the result will effectively be to deny access.
+
+![](images/am401/am-policy-sets-14.png)
+
+![](images/am401/am-policy-sets-15.png)
+
+Once a decision is reached, AM must send the response to the PEP. AM sends a response containing:
+* Resources to which the decision applies
+* Actions and their values: true (allow) or false (deny)
+* Attributes: Extra information as defined in attribute response
+* Advices
+
+If a policy exists for the subject and the resource, AM responds with a json object containing information about which actions are allowed or denied.
+
+### Lab Notes
+
+#### Policies
+
+The FEC website is protected by IG. IG is configured to evaluate policies with AM before granting access to the Browse and Premium pages. However, no policies are currently configured in AM. As the expected default behavior for a policy enforcement point (PEP) is to deny access, unless explicitly allowed by AM, IG always refuses access to the Browse and Premium pages.
+
+IG could be configured to allow all authenticated users access to everything without a need for policy evaluation, and then reduce access for specific pages by creating policies to deny access. This is not best practice. It is always better to add access permissions to new resources, instead of having to actively restrict access to resources, and potentially forget to do so.
+
+**Gotcha:** IG sends the policy evaluation request based on the backend resource, and not on the resource initially requested by the end user. This is the reason we entered the non-SSL resource on port 80, instead of the requested https resource on port 8443.
+
+**Gotcha:** You need to explicitly allow accessing a URL with query paramtersbecause the wildcard (*) in resource patterns does not match question marks (?).
+
+![](images/am401/labs-ig-1.png)
+
+![](images/am401/labs-ig-2.png)
+
