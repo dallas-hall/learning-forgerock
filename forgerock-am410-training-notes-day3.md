@@ -1,6 +1,6 @@
-# AM410 Day 2 - Improving Access Management Security
+# AM410 Day 3 - Extending Services Using OAuth2-Based Protocols
 
-- [AM410 Day 2 - Improving Access Management Security](#am410-day-2---improving-access-management-security)
+- [AM410 Day 3 - Extending Services Using OAuth2-Based Protocols](#am410-day-3---extending-services-using-oauth2-based-protocols)
   - [Lesson 1 - Integrating Applications With OAuth2](#lesson-1---integrating-applications-with-oauth2)
     - [OAuth2](#oauth2)
       - [Overview](#overview)
