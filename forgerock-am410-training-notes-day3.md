@@ -453,11 +453,119 @@ For an mTLS client certificate-bound access token, the resource server compares 
 
 In this exercise, you use curl to simulate an OAuth2 client requesting an access token with the client credentials OAuth2 grant. The authentication method chosen for client authentication is mTLS. To implement mTLS client authentication, configure the Tomcat server to request client certificates, create a client certificate, add it to the AM truststore, then create and configure a client profile in AM.
 
-
-
 ## Lesson 4 - Transforming OAuth2 Tokens
 
-###
+A security token is a set of data that supports sharing of identity and security information in heterogeneous environments or across security domains. Examples of security tokens include JWTs and SAML2 assertions.
+
+A **security token service (STS)** is a service that can validate security tokens it receives, and can issue new security tokens in response. The new tokens can be used by clients to obtain appropriate access credentials for requested resources in heterogeneous environments or across security domains.
+
+While the goal of both the STS and OAuth2 Token Exchange service implementations are to transform tokens, they differ completely in implementation and capabilities.
+
+The STS service is used to establish cross-domain trust federation relationships. This is done through a REST STS framework loosely based on the SOAP WS-Trust specification that you need to build, deploy, and maintain yourself.
+
+The REST STS service supports username/password, SSO tokens, X.509 certificates, and ID tokens as input tokens, and SAML2 assertions and ID tokens as output tokens. Due to its transformation capabilities, the STS service is more suited to helping federate legacy platforms.
+
+AM configured as an OAuth2/OIDC authorization server uses the OAuth2 Token Exchange specification to transform OAuth2-related tokens. The AM OAuth2 Token Exchange is used only with OAuth2/OIDC platforms.
+
+![](images/am401/am-token-exchange-1.png)
+
+The graphic illustrates a client application, such as a mobile app, interacting with an application service (API1) in the cloud. The cloud application service communicates with several microservices (API2, API3). The microservices may interact with other microservices, such as AP2 communicating with API4.
+
+Exchanging tokens requires a subject token, which is the original token to be exchanged. In the ForgeRock documentation and this lesson, the new token resulting from token exchange is referred to as an exchanged token.
+* The subject token: A required token representing the identity of the party on behalf of whom the request is being made.
+* The actor token: An optional token representing the identity of the acting party.
+
+A client may want to exchange tokens for:
+* Impersonation:
+  * Used by a client to act as the subject on another client.
+  * Has a subject token.
+* Delegation:
+  * Used by a subject to act on behalf of another subject.
+  * Has a subject token and an actor token. The actor identity is stored in an act claim.
+
+To impersonate means to pretend you are another person when performing a job or duty. Impersonation is a token exchange use case whereby a client performs an action on behalf of the user where there is no need to separate the user and the client.
+
+To delegate means giving a job or duty to someone else to perform it on your behalf. Delegation is a token exchange whereby a client performs an action on behalf of the user when it is important that the user and client must be kept as different entities.
+
+AM performs token exchange as if it were issuing a normal token of that type, with the following differences:
+* Copies claims and values that must stay the same, from the subject token, in the new token.
+* Derives scopes from the scope implementation used in the OAuth2/OIDC grant type flows.
+* Adds the act and may_act claims.
+* Adds an expiry time independent of the original token.
+
+The `act` claim is part of the exchanged token that:
+* Identifies the party acting on behalf of the token's subject.
+* Expresses that delegation has occurred.
+* Can be nested to have a chain of delegation.
+
+The `may_act` claim is part of the original subject token that:
+* Specifies who may act on behalf of the user.
+* Acts as a condition for the authorization server issuing exchanged tokens where:
+  * The client making the exchange must be authorized in the claim (impersonation or delegation).
+  * The subject of the actor token must also be authorized in the claim of the subject token (delegation).
+
+Exchanged tokens do not need the exact same scopes/claims that are in the subject token. Exchanged tokens can have their scopes/claims restricted or expanded.
+
+![](images/am401/am-token-exchange-2.png)
+
+1. Service A receives a subject (access) token from a client application.
+2. Service A sends the subject token to AM for exchange.
+3. AM responds with a new (exchanged) access token.
+4. Service A sends a new access token to Service B.
+
+Impersonation tokens cannot be told apart from normal tokens: no extra claims. Due to the risk of identity theft, implement token impersonation across trusted systems only.
+
+![](images/am401/am-token-exchange-3.png)
+
+1. The user opens the bank app.
+2. The application requests authentication using an authorization service.
+3. The user authenticates.
+4. The bank app receives an access token with multiple scopes.
+5. The app presents the banking page and services.
+6. The user selects the transfer service.
+7. The app requests an access token exchange impersonating the user with transfer scope.
+8. The new impersonation access token is returned.
+9. The app sends the new access token with the transfer scope request.
+
+10 to 12 The transfer service processes the request and returns the result to the app, which displays the result information.
+
+![](images/am401/am-token-exchange-4.png)
+
+Here is the same sequence of steps shown for the impersonation with a restriction flow with the following differences:
+* This example uses an ID token instead of an access token.
+* After logging in, the user receives the subject token, which is an ID token that represents proof of their identity.
+* When the user makes a transaction, the client exchanges the user's ID token with an impersonation access token with the transfer scope, and sends it to the transfer service.
+
+The impersonation access token is an expanded token since it now has the `transfer` scope, which wasn't present in the ID token.
+
+![](images/am401/am-token-exchange-5.png)
+
+1. Service A receives a subject token and an actor token.
+2. Service A sends both the subject token and actor token to AM.
+3. AM responds with a new (exchanged) access token with the identity of the actor token attached as additional data.
+4. Service A sends a new access token, with the identity of the actor token, to Service B. In this case, the actor token is acting on behalf of the subject token.
+
+An example of the delegation pattern is:
+* A user phones a call center because of a problem with their water supply.
+* The operator (client) answers the call, verifies the identity of the user, and creates an ID token (the Subject token) on behalf of the user.
+* The operator also creates an access token (the actor token) for themselves.
+* The operator then exchanges both tokens for a delegated access token for booking a repair on behalf of the user. Both the operator (actor token) and the user (subject token) are reflected on the repair request.
+
+The delegated token is a restricted token, since it can only be used for booking a repair on behalf of the user, and not for any other action, such as ending the user's contract.
+
+![](images/am401/am-token-exchange-6.png)
+
+The flow illustrates a user who phones a call center because their water supply has a problem. The operator (client) answers the call, verifies the identity of the user, and creates an ID token (the subject token) on behalf of the user. The operator also creates an access token (the actor token) for themselves.
+
+Then, the operator exchanges both tokens for a delegated access token to book a repair for the user, where both the operator and the user are reflected on the repair request.
+
+This delegated token flow is an example of a restricted token, because the token can only be used for booking a repair on behalf of the user, and not for any other action, such as ending the user's contract.
+
+![](images/am401/am-token-exchange-7.png)
+
+The scenario illustrated here is where both the subject and the actor tokens are ID tokens. To authorize a repair, the operator could request a delegated access token with the scope of `repair`.
+
+In this case, the delegated token is an expanded token because it now has the `repair` scope, which neither of the ID tokens had before.
 
 ### Labs
 
