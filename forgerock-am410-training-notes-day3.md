@@ -11,6 +11,7 @@
     - [Labs](#labs)
       - [OAuth2](#oauth2-1)
   - [Lesson 2 - Integrating Applications With OIDC](#lesson-2---integrating-applications-with-oidc)
+    - [ODIC Overview](#odic-overview)
     - [Labs](#labs-1)
   - [Lesson 3 - Authenticating OAuth2 Clients and using mTLS in OAuth2 for PoP](#lesson-3---authenticating-oauth2-clients-and-using-mtls-in-oauth2-for-pop)
     - [Labs](#labs-2)
@@ -24,6 +25,14 @@
 ### OAuth2
 
 #### Overview
+
+![](images/am401/am-oauth2-18.png)
+
+https://developer.okta.com/blog/2019/10/21/illustrated-guide-to-oauth-and-oidc - OAuth 2.0 is a security standard where you give one application permission to access your data in another application. The steps to grant permission, or consent, are often referred to as authorization or even delegated authorization. You authorize one application to access your data, or use features in another application on your behalf, without giving them your password. Sweet!
+
+![](images/am401/am-oauth2-19.png)
+
+![](images/am401/am-oauth2-20.png)
 
 OAuth2 is a framework that defines a flexible agreement for how applications interact. Provides a method for an application to access resources with the resource owner consent, respecting consent withdrawal. With OAuth2, the resource owner credentials do not need to be shared. The result of an OAuth2 handshake is a security token, called an access token. JWTs are commonly used because it is an easy way to encode and pass around JSON data without having to escape it for different contexts.
 
@@ -279,9 +288,82 @@ Macaroons are layered on top of existing CTS-based and client-based OAuth2 token
 
 #### OAuth2
 
+Before OAuth2 client applications can communicate with AM as an authorization server, AM must be configured with an OAuth2 Provider service, which is also an OIDC Provider.
+
+* Subscribers of the ForgeRock Entertainment Company (FEC) website may use a Smart TV (the OAuth2 client) to stream content. To be able to stream content, the Smart TV needs to obtain an access token for a specific subscriber.
+* The Smart TV is an OAuth2 device-type client that can use the Device Code OAuth2 grant type flow to obtain the access token needed. After the Smart TV gets the access token, it presents the access token to the FEC application (the resource server), and requests to access a specific resource (a movie to stream).
+* To decide whether access to the resource should be allowed or not, the FEC application validates the access token and checks if it contains the `streaming` scope.
+* Only the scopes defined for, and requested by a specific client, can be added to the access token.
+* You register an OAuth2 client profile, in AM, for the Smart TV OAuth2 client to communicate with AM as an OAuth2 Provider (authorization server) by using the Device Code grant type flow and the `streaming` scope.
+
+An OAuth2 client can only request an access token from AM, provided that the client is registered and can successfully authenticate itself with AM.
+
+Depending on the type of OAuth2 client, you create a client profile configured with the client credentials and scopes that it can request
+
+Emulate the SmartTV being authorized to stream movies by using:
+* Postman REST API requests to initiate and test the Device Code grant type flow.
+* A web browser to enter the unique user code and authorize the SmartTV for the streaming scope.
+
 ## Lesson 2 - Integrating Applications With OIDC
 
-###
+### ODIC Overview
+
+![](images/am401/am-oidc-2.png)
+
+https://developer.okta.com/blog/2019/10/21/illustrated-guide-to-oauth-and-oidc - OAuth 2.0 is designed only for authorization, for granting access to data and features from one application to another. OpenID Connect (OIDC) is a thin layer that sits on top of OAuth 2.0 that adds login and profile information about the person who is logged in. Establishing a login session is often referred to as authentication, and information about the person logged in (i.e. the Resource Owner) is called identity. When an Authorization Server supports OIDC, it is sometimes called an identity provider, since it provides information about the Resource Owner back to the Client.
+
+![](images/am401/am-oidc-3.png)
+
+![](images/am401/am-oidc-4.png)
+
+**OpenID Connect (OIDC)** is an identity layer built on top of the OAuth 2.0 framework. It allows third-party applications to verify the identity of the end-user and to obtain basic user profile information. OIDC uses **JSON web tokens (JWTs)**, which you can obtain using flows conforming to the OAuth 2.0 specifications.
+
+While OAuth 2.0 is about resource access and sharing, OIDC is about user authentication. Its purpose is to give you one login for multiple sites. Each time you need to log in to a website using OIDC, you are redirected to your OpenID site where you log in, and then taken back to the website.
+
+JWTs contain claims, which are statements (such as name or email address) about an entity (typically, the user) and additional metadata.
+
+![](images/am401/am-oidc-1.png)
+
+Full-featured applications must be available both on the backend and on the front end; for example, on native applications, in order to support personalization.
+
+Personalization is key, and because personal data is usually kept with the server, a technology needs to be used to ensure the identity of the app user. After the user identity has been ensured, the relevant user personal data can be retrieved from the server and made available to the application.
+
+The ID token is a JWT that is:
+* The primary extension that OIDC makes to OAuth2 to enable end users to be authenticated.
+* A security token that contains claims about the authentication of an end user, and potentially other requested claims.
+* Signed, encoded, and optionally encrypted.
+* Asser
+
+![](images/am401/am-oidc-5.png)
+
+The ID token contains three parts separated by a period (.) character:
+1. The first part is a base 64-encoded representation of the algorithm used to encode the signature.
+2. The second part is a base 64-encoded representation of the token content itself. It holds information such as the issuer (iss), the user id (sub), the audience (aud), the expiry (exp), and the nonce value.
+3. The third part is the signature, which is signed the authorization server.
+
+The client must validate the signature to ensure that the expected authorization server emitted the token.
+
+OIDC can provide information about the user through the use of scopes and claims.
+* A claim corresponds to a user profile attribute.
+* A scope is a set of claims of the same nature.
+
+![](images/am401/am-oidc-6.png)
+
+The scope is mapped to its claims, and the claims are mapped to their individual user attributes from the user profile. The scope and claim mappings are defined in an OIDC script.
+
+AM currently supports 5 OIDC grant types.
+
+![](images/am401/am-oidc-7.png)
+
+At the start, the end user wants to modify a profile setting, such as a phone number in an application. The application needs the identity of the user to be asserted by the OIDC provider before they allow the user to sign in and change their profile settings.
+
+![](images/am401/am-oidc-8.png)
+
+AM provides an OIDC claims script, called `OIDC Claims Script`, that includes the profile scope and related claims in the ID token. This is written in Groovy and you can write them in JavaScript also.
+
+![](images/am401/am-oidc-9.png)
+
+
 
 ### Labs
 
