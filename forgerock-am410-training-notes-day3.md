@@ -13,11 +13,13 @@
   - [Lesson 2 - Integrating Applications With OIDC](#lesson-2---integrating-applications-with-oidc)
     - [ODIC Overview](#odic-overview)
     - [Labs](#labs-1)
+      - [OIDC](#oidc)
   - [Lesson 3 - Authenticating OAuth2 Clients and using mTLS in OAuth2 for PoP](#lesson-3---authenticating-oauth2-clients-and-using-mtls-in-oauth2-for-pop)
     - [Labs](#labs-2)
   - [Lesson 4 - Transforming OAuth2 Tokens](#lesson-4---transforming-oauth2-tokens)
     - [Labs](#labs-3)
   - [Lesson 5 - Implementing Social authentication](#lesson-5---implementing-social-authentication)
+    - [Social Access](#social-access)
     - [Labs](#labs-4)
 
 ## Lesson 1 - Integrating Applications With OAuth2
@@ -332,7 +334,7 @@ The ID token is a JWT that is:
 * The primary extension that OIDC makes to OAuth2 to enable end users to be authenticated.
 * A security token that contains claims about the authentication of an end user, and potentially other requested claims.
 * Signed, encoded, and optionally encrypted.
-* Asser
+* Asserts the identity of the end user so that it can be used for authentication.
 
 ![](images/am401/am-oidc-5.png)
 
@@ -363,9 +365,11 @@ AM provides an OIDC claims script, called `OIDC Claims Script`, that includes th
 
 ![](images/am401/am-oidc-9.png)
 
-
-
 ### Labs
+
+#### OIDC
+
+
 
 ## Lesson 3 - Authenticating OAuth2 Clients and using mTLS in OAuth2 for PoP
 
@@ -381,6 +385,46 @@ AM provides an OIDC claims script, called `OIDC Claims Script`, that includes th
 
 ## Lesson 5 - Implementing Social authentication
 
-###
+Optional.
+
+### Social Access
+
+In many contexts, it makes sense to simplify the user flow to improve the user's experience.
+
+Website registration and login issues:
+* Time consuming
+* Forgotten login information
+* Multiple accounts, e.g. password management and password reuse.
+
+Social registration and login unifies and simplifies the process:
+* Fewer accounts for users to manage
+* Data sharing and authorization control with OAuth2
+* Make both social and traditional login available.
+
+Some users are reluctant to use social login as it comes with its own risks: lack of trust in the social media, what if the social account itself is compromised, and similar concerns. For that reason, most organization propose both social and traditional login to their users.
+
+Social access has two components:
+1. Social registration - basic social registration is available for AM, it belongs to the identity management sphere, and the Identity Platform, which integrates ForgeRock Identity Management (IDM), should be used for more complex solutions.
+2. Social authentication - is an IAM task. It is implemented in AM by adding the social identity provider service to the realm, and defining the supported social identity providers
+
+![](images/am401/am-social-1.png)
+
+Using a third-party OIDC provider means that AM is now filling the role of the client or relying party in an OAuth2/OIDC flow. AM provides a set of social identity provider nodes that effectively transform AM into an OAuth2/OIDC client.
+
+The flow then becomes fairly simple; the social identity provider nodes are included in a tree that is called when the user tries to log in.
+
+![](images/am401/am-social-2.png)
+
+To implement social registration and authentication in AM, you must add the social identity provider service to the realm and ensure it is enabled. You can then add all the social providers supported by your company.
+
+If you support a social identity provider that is not part of the predefined list, find out if the flow used by the social identity provider is OAuth2 or OIDC and use the corresponding generic choice in the drop-down menu.
+
+![](images/am401/am-social-3.png)
+
+To make a social identity provider available to your solution, you must first access the provider site and register a client representing your application. Check the social identity provider documentation to find out how to do that. At the end of the process you should have obtained client credentials, and defined the various elements for the OAuth2/OIDC flow to be successful.
+
+![](images/am401/am-social-4.png)
+
+To delegate social registration and social authentication to a social identity provider, the authentication tree can be modified to include a Select Identity Provider node, a Social Provider Handler Node, and a Provision Dynamic Account node.
 
 ### Labs
