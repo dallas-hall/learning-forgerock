@@ -12,15 +12,15 @@
       - [OAuth2](#oauth2-1)
   - [Lesson 2 - Integrating Applications With OIDC](#lesson-2---integrating-applications-with-oidc)
     - [ODIC Overview](#odic-overview)
-    - [Labs](#labs-1)
-      - [OIDC](#oidc)
   - [Lesson 3 - Authenticating OAuth2 Clients and using mTLS in OAuth2 for PoP](#lesson-3---authenticating-oauth2-clients-and-using-mtls-in-oauth2-for-pop)
-    - [Labs](#labs-2)
+    - [4 Authentication Modes](#4-authentication-modes)
+- [PoP & mTLS](#pop--mtls)
+    - [Labs](#labs-1)
   - [Lesson 4 - Transforming OAuth2 Tokens](#lesson-4---transforming-oauth2-tokens)
-    - [Labs](#labs-3)
+    - [Labs](#labs-2)
   - [Lesson 5 - Implementing Social authentication](#lesson-5---implementing-social-authentication)
     - [Social Access](#social-access)
-    - [Labs](#labs-4)
+    - [Labs](#labs-3)
 
 ## Lesson 1 - Integrating Applications With OAuth2
 
@@ -365,17 +365,95 @@ AM provides an OIDC claims script, called `OIDC Claims Script`, that includes th
 
 ![](images/am401/am-oidc-9.png)
 
-### Labs
-
-#### OIDC
-
-
 
 ## Lesson 3 - Authenticating OAuth2 Clients and using mTLS in OAuth2 for PoP
 
-###
+### 4 Authentication Modes
+
+![](images/am401/am-mtls-1.png)
+
+Only confidential clients are required to authenticate. Public clients, such as clients for native applications or SPAs, are not able to store credentials securely. This is why they are not required to authenticate. Instead, they should mitigate the security risk by using OAuth2 grants with PKCE.
+
+There are four different methods to authenticate an OAuth2 client.
+1. Form parameters
+2. Authorization headers
+3. JWT profiles
+4. mTLS
+
+![](images/am401/am-mtls-2.png)
+
+When using form parameters to authenticate OAuth2 clients, a secret must be shared between the client and AM.
+
+![](images/am401/am-mtls-3.png)
+
+When using authorization headers to authenticate OAuth2 clients, a secret must be shared between the client and AM.
+
+![](images/am401/am-mtls-4.png)
+
+![](images/am401/am-mtls-5.png)
+
+When authenticating an OAuth2 client using form parameters or authorization headers, the client secret is sent together with the request, which presents a security risk.
+
+With the JWT profiles approach, the request does not contain a secret key. Instead, a JWT assertion is provided to AM when the client accesses an endpoint requiring authentication.
+
+The JWT assertion contains information that identifies the client, and is signed. AM verifies the content of the assertion and the validity of its signature before sending a response.
+
+The JWT token must be digitally signed and be a valid JWT. The JWT Client Assertions must be signed. AM supports JWT Client Assertions signed using a private key. The corresponding public key, needed to verify the signature, must be provided by the client and is added to the client profile in AM.
+* As an X.509 certificate
+* As a JWK set
+* As a public URL containing keys
+* As a JSON web key set
+
+![](images/am401/am-mtls-6.png)
+
+mTLS is an extension of the TLS handshake to authenticate clients.
+* In a TLS handshake, the server provides a certificate to the client, such as a browser, and the browser validates the certificate.
+* Mutual TLS is the process of how a client presents its X.509 certificate and proves possession of the corresponding private key to a server when negotiating a TLS session.
+
+![](images/am401/am-mtls-7.png)
+
+To utilize TLS for OAuth client authentication, the TLS connection between the client and the authorization server MUST have been established or reestablished with mTLS X.509 certificate authentication. You must configure the web container in which AM runs to use TLS connections, and to request and accept client certificates.
+
+![](images/am401/am-mtls-8.png)
+
+![](images/am401/am-mtls-9.png)
+
+Clients can authenticate themselves with mTLS using either the PKI method or using a self-signed certificate. With the PKI method, the certificate contains a subject DN and a validated certificate chain to identify the client. The certificate is valid if the subject DN in the certificate matches the expected DN configured or registered for that particular client.
+
+In the context of X.509 certificate spoofing:
+* Problem: If the PKI method of client authentication is used, an attacker could try to impersonate a client using a certificate with the same subject DN but issued by a different CA, which the authorization server trusts.
+* Solution: To cope with that threat, the authorization server should only accept, as trust anchors, a limited number of CAs whose certificate issuance policy meets its security requirements.
+
+There is an assumption then that the client and server agree on the set of trust anchors that the server uses to create and validate the certificate chain. Without this assumption the use of a Subject DN to identify the client certificate would open the server up to certificate spoofing attacks.
+
+# PoP & mTLS
+
+mTLS certificate-bound access tokens ensure that only the party in possession of the private key corresponding to the certificate can utilize the token to access the associated resources. The process is sometimes referred to as key confirmation, **proof-of-possession (PoP)**, or holder-of-key.
+
+Binding an access token to the client's certificate prevents the use of stolen access tokens or replay of access tokens by unauthorized parties. It also has the benefit of decoupling that binding from the client authentication with the authorization server, which enables mTLS during protected resource access to serve purely as a PoP mechanism.
+
+To obtain a certificate-bound access token, OAuth2 clients authenticate with an authorization server using mTLS. Upon successful client authentication, the OAuth2 authorization server binds the access token to the client's TLS certificate.
+
+![](images/am401/am-mtls-10.png)
+
+* Ensure the environment enforces TLS:
+  * Between client and AM
+  * Between client and resource server
+* Enable the TLS Certificate-Bound Access Tokens switch in the OAuth2 provider service.
+* Enable the Use Certificate-Bound Access Tokens switch in the client profile.
+* Configure the client for mTLS authentication.
+
+![](images/am401/am-mtls-11.png)
+
+The request to obtain a certificate-bound access token is identical to the request for a bearer access token using mTLS authentication for the client, which was described in the previous section. The difference is in the content of the access token returned.
+
+For an mTLS client certificate-bound access token, the resource server compares that certificate hash to a hash of the client certificate used for mTLS authentication and rejects the request, if they do not match.
 
 ### Labs
+
+In this exercise, you use curl to simulate an OAuth2 client requesting an access token with the client credentials OAuth2 grant. The authentication method chosen for client authentication is mTLS. To implement mTLS client authentication, configure the Tomcat server to request client certificates, create a client certificate, add it to the AM truststore, then create and configure a client profile in AM.
+
+
 
 ## Lesson 4 - Transforming OAuth2 Tokens
 
