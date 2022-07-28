@@ -354,6 +354,12 @@ AM also requires a DS for the configuration store to storage AM configuration. T
 
 ### Labs
 
+The AM instance you install in this lesson is the first server you create for a cluster configuration. The initial architecture of the AM installation topology is shown in the following diagram:
+
+![](images/am401/am-install-21.png)
+
+
+
 ## Lesson 1 - Upgrading AM
 
 ### Versions
