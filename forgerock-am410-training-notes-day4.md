@@ -160,12 +160,20 @@ There are different ways to address this question. The solution adopted in this 
 Request
 
 ```xml
-<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" ID="s2b95037fbadda642f4a995a0d00a51a81022b4e39" Version="2.0" IssueInstant="2022-07-28T01:37:17Z" Destination="https://am.example.com:9443/login/SSORedirect/metaAlias/bravo/idp" ForceAuthn="false" IsPassive="false" ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" AssertionConsumerServiceURL="https://fakecrm.example.org:10443/sp1/AuthConsumer/metaAlias/sp">
- <saml:Issuer xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">https://fakecrm.example.org:10443/sp1</saml:Issuer>
- <samlp:NameIDPolicy xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" SPNameQualifier="https://fakecrm.example.org:10443/sp1" AllowCreate="true"></samlp:NameIDPolicy>
- <samlp:RequestedAuthnContext xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" Comparison="minimum">
-  <saml:AuthnContextClassRef xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml:AuthnContextClassRef>
- </samlp:RequestedAuthnContext>
+<samlp:AuthnRequest
+	xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" ID="s2b95037fbadda642f4a995a0d00a51a81022b4e39" Version="2.0" IssueInstant="2022-07-28T01:37:17Z" Destination="https://am.example.com:9443/login/SSORedirect/metaAlias/bravo/idp" ForceAuthn="false" IsPassive="false" ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" AssertionConsumerServiceURL="https://fakecrm.example.org:10443/sp1/AuthConsumer/metaAlias/sp">
+	<saml:Issuer
+		xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">https://fakecrm.example.org:10443/sp1
+	</saml:Issuer>
+	<samlp:NameIDPolicy
+		xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" SPNameQualifier="https://fakecrm.example.org:10443/sp1" AllowCreate="true">
+	</samlp:NameIDPolicy>
+	<samlp:RequestedAuthnContext
+		xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" Comparison="minimum">
+		<saml:AuthnContextClassRef
+			xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
+		</saml:AuthnContextClassRef>
+	</samlp:RequestedAuthnContext>
 </samlp:AuthnRequest>
 ```
 
@@ -176,50 +184,73 @@ Request
 Response
 
 ```xml
-<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" ID="s29220908c78d8691694fdbcddc7d1d35a516ed6a6" InResponseTo="s2b95037fbadda642f4a995a0d00a51a81022b4e39" Version="2.0" IssueInstant="2022-07-28T01:37:31Z" Destination="https://fakecrm.example.org:10443/sp1/AuthConsumer/metaAlias/sp">
- <saml:Issuer xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">https://am.example.com:9443/login</saml:Issuer>
- <samlp:Status xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">
-  <samlp:StatusCode xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" Value="urn:oasis:names:tc:SAML:2.0:status:Success"></samlp:StatusCode>
- </samlp:Status>
- <saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="s29829c867c4e2b81118dd0fc0c780f46dc4b8dadd" IssueInstant="2022-07-28T01:37:31Z" Version="2.0">
-  <saml:Issuer>https://am.example.com:9443/login</saml:Issuer>
-  <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-   <ds:SignedInfo>
-    <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></ds:CanonicalizationMethod>
-    <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></ds:SignatureMethod>
-    <ds:Reference URI="#s29829c867c4e2b81118dd0fc0c780f46dc4b8dadd">
-     <ds:Transforms>
-      <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform>
-      <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></ds:Transform>
-     </ds:Transforms>
-     <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></ds:DigestMethod>
-     <ds:DigestValue>ia1SxYbQkphIzfpCJJpOH5mSUeFQWF5DNbrv+2MKeQ4=</ds:DigestValue>
-    </ds:Reference>
-   </ds:SignedInfo>
-   <ds:SignatureValue>lLqJJ3CWhysHFAkA3QsrwTl1VvrHO810Sk9Ny73aQwOQ89/at2WxD6ENfoH/AtIU9sgRM+/BLefAlrtys5M4AG0fO0g5EQ0gYXWtTVXv7fgMq2EVmAL4z1GhafmYi067mZAV/Hrh9fY/yIilMFyHpBfuOW/5OqCMmSDHhae9qq0t/CzpmR1sPgyGyMHomFXXLtrZeycxBh7i9r50HPb8hzd3jgxONTSlHNDjDl6kTwsb+1YooAHDTIaaFOOarFHZkynap/NFfelXuHr4KA7S7Te/rpEzd4GTKjm8vRsKUwQa7xAXsaqYNFrjJoI7dRurzUzaTXve7jC2wqe7eNN85A==</ds:SignatureValue>
-   <ds:KeyInfo>
-    <ds:X509Data>
-     <ds:X509Certificate>MIIDdzCCAl+gAwIBAgIES3eb+zANBgkqhkiG9w0BAQsFADBsMRAwDgYDVQQGEwdVbmtub3duMRAwDgYDVQQIEwdVbmtub3duMRAwDgYDVQQHEwdVbmtub3duMRAwDgYDVQQKEwdVbmtub3duMRAwDgYDVQQLEwdVbmtub3duMRAwDgYDVQQDEwdVbmtub3duMB4XDTE2MDUyNDEzNDEzN1oXDTI2MDUyMjEzNDEzN1owbDEQMA4GA1UEBhMHVW5rbm93bjEQMA4GA1UECBMHVW5rbm93bjEQMA4GA1UEBxMHVW5rbm93bjEQMA4GA1UEChMHVW5rbm93bjEQMA4GA1UECxMHVW5rbm93bjEQMA4GA1UEAxMHVW5rbm93bjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANdIhkOZeSHagT9ZecG+QQwWaUsi7OMv1JvpBr/7HtAZEZMDGWrxg/zao6vMd/nyjSOOZ1OxOwjgIfII5+iwl37oOexEH4tIDoCoToVXC5iqiBFz5qnmoLzJ3bF1iMupPFjz8Ac0pDeTwyygVyhv19QcFbzhPdu+p68epSatwoDW5ohIoaLzbf+oOaQsYkmqyJNrmht091XuoVCazNFt+UJqqzTPay95Wj4F7Qrs+LCSTd6xp0Kv9uWG1GsFvS9TE1W6isVosjeVm16FlIPLaNQ4aEJ18w8piDIRWuOTUy4cbXR/Qg6a11l1gWls6PJiBXrOciOACVuGUoNTzztlCUkCAwEAAaMhMB8wHQYDVR0OBBYEFMm4/1hF4WEPYS5gMXRmmH0gs6XjMA0GCSqGSIb3DQEBCwUAA4IBAQDVH/Md9lCQWxbSbie5lPdPLB72F4831glHlaqms7kzAM6IhRjXmd0QTYq3Ey1J88KSDf8A0HUZefhudnFaHmtxFv0SF5VdMUY14bJ9UsxJ5f4oP4CVh57fHK0w+EaKGGIw6TQEkL5L/+5QZZAywKgPz67A3o+uk45aKpF3GaNWjGRWEPqcGkyQ0sIC2o7FUTV+MV1KHDRuBgreRCEpqMoY5XGXe/IJc1EJLFDnsjIOQU1rrUzfM+WP/DigEQTPpkKWHJpouP+LLrGRj2ziYVbBDveP8KtHvLFsnexA/TidjOOxChKSLT9LYFyQqsvUyCagBb4aLs009kbW6inN8zA6</ds:X509Certificate>
-    </ds:X509Data>
-   </ds:KeyInfo>
-  </ds:Signature>
-  <saml:Subject>
-   <saml:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" NameQualifier="https://am.example.com:9443/login" SPNameQualifier="https://fakecrm.example.org:10443/sp1">xrlMTAYdoBqeydNcu0/50a5Esz6f</saml:NameID>
-   <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
-    <saml:SubjectConfirmationData InResponseTo="s2b95037fbadda642f4a995a0d00a51a81022b4e39" NotOnOrAfter="2022-07-28T01:47:31Z" Recipient="https://fakecrm.example.org:10443/sp1/AuthConsumer/metaAlias/sp"></saml:SubjectConfirmationData>
-   </saml:SubjectConfirmation>
-  </saml:Subject>
-  <saml:Conditions NotBefore="2022-07-28T01:27:31Z" NotOnOrAfter="2022-07-28T01:47:31Z">
-   <saml:AudienceRestriction>
-    <saml:Audience>https://fakecrm.example.org:10443/sp1</saml:Audience>
-   </saml:AudienceRestriction>
-  </saml:Conditions>
-  <saml:AuthnStatement AuthnInstant="2022-07-28T01:37:31Z" SessionIndex="s256df4f69d90609e9f2963b3a8447c98b00bbaf01">
-   <saml:AuthnContext>
-    <saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml:AuthnContextClassRef>
-   </saml:AuthnContext>
-  </saml:AuthnStatement>
- </saml:Assertion>
+<samlp:AuthnRequest
+	xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" ID="s2b95037fbadda642f4a995a0d00a51a81022b4e39" Version="2.0" IssueInstant="2022-07-28T01:37:17Z" Destination="https://am.example.com:9443/login/SSORedirect/metaAlias/bravo/idp" ForceAuthn="false" IsPassive="false" ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" AssertionConsumerServiceURL="https://fakecrm.example.org:10443/sp1/AuthConsumer/metaAlias/sp">
+	<saml:Issuer
+		xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">https://fakecrm.example.org:10443/sp1
+	</saml:Issuer>
+	<samlp:NameIDPolicy
+		xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" SPNameQualifier="https://fakecrm.example.org:10443/sp1" AllowCreate="true">
+	</samlp:NameIDPolicy>
+	<samlp:RequestedAuthnContext
+		xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" Comparison="minimum">
+		<saml:AuthnContextClassRef
+			xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
+		</saml:AuthnContextClassRef>
+	</samlp:RequestedAuthnContext>
+</samlp:AuthnRequest>
+<samlp:Response
+	xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" ID="s29220908c78d8691694fdbcddc7d1d35a516ed6a6" InResponseTo="s2b95037fbadda642f4a995a0d00a51a81022b4e39" Version="2.0" IssueInstant="2022-07-28T01:37:31Z" Destination="https://fakecrm.example.org:10443/sp1/AuthConsumer/metaAlias/sp">
+	<saml:Issuer
+		xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">https://am.example.com:9443/login
+	</saml:Issuer>
+	<samlp:Status
+		xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">
+		<samlp:StatusCode
+			xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" Value="urn:oasis:names:tc:SAML:2.0:status:Success">
+		</samlp:StatusCode>
+	</samlp:Status>
+	<saml:Assertion
+		xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="s29829c867c4e2b81118dd0fc0c780f46dc4b8dadd" IssueInstant="2022-07-28T01:37:31Z" Version="2.0">
+		<saml:Issuer>https://am.example.com:9443/login</saml:Issuer>
+		<ds:Signature
+			xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+			<ds:SignedInfo>
+				<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></ds:CanonicalizationMethod>
+				<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></ds:SignatureMethod>
+				<ds:Reference URI="#s29829c867c4e2b81118dd0fc0c780f46dc4b8dadd">
+					<ds:Transforms>
+						<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform>
+						<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></ds:Transform>
+					</ds:Transforms>
+					<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></ds:DigestMethod>
+					<ds:DigestValue>ia1SxYbQkphIzfpCJJpOH5mSUeFQWF5DNbrv+2MKeQ4=</ds:DigestValue>
+				</ds:Reference>
+			</ds:SignedInfo>
+			<ds:SignatureValue>lLqJJ3CWhysHFAkA3QsrwTl1VvrHO810Sk9Ny73aQwOQ89/at2WxD6ENfoH/AtIU9sgRM+/BLefAlrtys5M4AG0fO0g5EQ0gYXWtTVXv7fgMq2EVmAL4z1GhafmYi067mZAV/Hrh9fY/yIilMFyHpBfuOW/5OqCMmSDHhae9qq0t/CzpmR1sPgyGyMHomFXXLtrZeycxBh7i9r50HPb8hzd3jgxONTSlHNDjDl6kTwsb+1YooAHDTIaaFOOarFHZkynap/NFfelXuHr4KA7S7Te/rpEzd4GTKjm8vRsKUwQa7xAXsaqYNFrjJoI7dRurzUzaTXve7jC2wqe7eNN85A==</ds:SignatureValue>
+			<ds:KeyInfo>
+				<ds:X509Data>
+					<ds:X509Certificate>MIIDdzCCAl+gAwIBAgIES3eb+zANBgkqhkiG9w0BAQsFADBsMRAwDgYDVQQGEwdVbmtub3duMRAwDgYDVQQIEwdVbmtub3duMRAwDgYDVQQHEwdVbmtub3duMRAwDgYDVQQKEwdVbmtub3duMRAwDgYDVQQLEwdVbmtub3duMRAwDgYDVQQDEwdVbmtub3duMB4XDTE2MDUyNDEzNDEzN1oXDTI2MDUyMjEzNDEzN1owbDEQMA4GA1UEBhMHVW5rbm93bjEQMA4GA1UECBMHVW5rbm93bjEQMA4GA1UEBxMHVW5rbm93bjEQMA4GA1UEChMHVW5rbm93bjEQMA4GA1UECxMHVW5rbm93bjEQMA4GA1UEAxMHVW5rbm93bjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANdIhkOZeSHagT9ZecG+QQwWaUsi7OMv1JvpBr/7HtAZEZMDGWrxg/zao6vMd/nyjSOOZ1OxOwjgIfII5+iwl37oOexEH4tIDoCoToVXC5iqiBFz5qnmoLzJ3bF1iMupPFjz8Ac0pDeTwyygVyhv19QcFbzhPdu+p68epSatwoDW5ohIoaLzbf+oOaQsYkmqyJNrmht091XuoVCazNFt+UJqqzTPay95Wj4F7Qrs+LCSTd6xp0Kv9uWG1GsFvS9TE1W6isVosjeVm16FlIPLaNQ4aEJ18w8piDIRWuOTUy4cbXR/Qg6a11l1gWls6PJiBXrOciOACVuGUoNTzztlCUkCAwEAAaMhMB8wHQYDVR0OBBYEFMm4/1hF4WEPYS5gMXRmmH0gs6XjMA0GCSqGSIb3DQEBCwUAA4IBAQDVH/Md9lCQWxbSbie5lPdPLB72F4831glHlaqms7kzAM6IhRjXmd0QTYq3Ey1J88KSDf8A0HUZefhudnFaHmtxFv0SF5VdMUY14bJ9UsxJ5f4oP4CVh57fHK0w+EaKGGIw6TQEkL5L/+5QZZAywKgPz67A3o+uk45aKpF3GaNWjGRWEPqcGkyQ0sIC2o7FUTV+MV1KHDRuBgreRCEpqMoY5XGXe/IJc1EJLFDnsjIOQU1rrUzfM+WP/DigEQTPpkKWHJpouP+LLrGRj2ziYVbBDveP8KtHvLFsnexA/TidjOOxChKSLT9LYFyQqsvUyCagBb4aLs009kbW6inN8zA6</ds:X509Certificate>
+				</ds:X509Data>
+			</ds:KeyInfo>
+		</ds:Signature>
+		<saml:Subject>
+			<saml:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" NameQualifier="https://am.example.com:9443/login" SPNameQualifier="https://fakecrm.example.org:10443/sp1">xrlMTAYdoBqeydNcu0/50a5Esz6f</saml:NameID>
+			<saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+				<saml:SubjectConfirmationData InResponseTo="s2b95037fbadda642f4a995a0d00a51a81022b4e39" NotOnOrAfter="2022-07-28T01:47:31Z" Recipient="https://fakecrm.example.org:10443/sp1/AuthConsumer/metaAlias/sp"></saml:SubjectConfirmationData>
+			</saml:SubjectConfirmation>
+		</saml:Subject>
+		<saml:Conditions NotBefore="2022-07-28T01:27:31Z" NotOnOrAfter="2022-07-28T01:47:31Z">
+			<saml:AudienceRestriction>
+				<saml:Audience>https://fakecrm.example.org:10443/sp1</saml:Audience>
+			</saml:AudienceRestriction>
+		</saml:Conditions>
+		<saml:AuthnStatement AuthnInstant="2022-07-28T01:37:31Z" SessionIndex="s256df4f69d90609e9f2963b3a8447c98b00bbaf01">
+			<saml:AuthnContext>
+				<saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml:AuthnContextClassRef>
+			</saml:AuthnContext>
+		</saml:AuthnStatement>
+	</saml:Assertion>
 </samlp:Response>
 ```
 
@@ -276,6 +307,8 @@ What happens once the account is linked locally will depend on the business requ
 
 ### SAML2 Metadata
 
+`https://am.example.com:9443/login/saml2/jsp/exportmetadata.jsp?&realm=/bravo&entityid=https://am.example.com:9443/login`
+
 Federation between two entities must be negotiated and configured before federation can take place. OASIS standard defines SAML2 metadata, an XML document that contains configuration data. It lets a third-party set up federation automatically with no need for negotiation. An entity can publish their metadata document, and any entity wishing to federate with them has enough information to do so automatically. If the basic information is not enough, or if specific behavior is expected, some negotiation may be needed.
 
 Metadata includes information about the supported identifiers, binding supported service endpoints, certificates, and keys, as well as cryptographic capabilities and security and privacy policies.
@@ -321,7 +354,162 @@ The meta alias uniquely identifies entities participating in a SAML2 federation 
 The Entity ID is a unique identifier for the outside world:
 * Often uses URL. For example, Entity ID may be: `https://am.example.com/login.`
 
-
-
-
 ### Labs
+
+In this exercise, you will use AM as a SAML2 SP, by delegating authentication to a third-party SAML2 IdP called Govidp
+
+A default SP (or IdP) contains all the configuration required to perform a successful federation flow. In this example, however, you add a non-default behavior, using a feature called auto-federation. When an account exists in both the SP and the IdP, auto-federation is a way to automatically link a user by matching the content of the assertion and the associated value for the user in the SP. In this exercise, we use the email attribute of a user. If the user email does not exist in the SP, they will log in to their account in the SP as shown in the previous lesson.
+
+You need to make AM aware of which entities it can work with. To do so, you will use the third-party IdP metadata, as it contains all the information needed to set up a basic, default federation flow.
+
+
+
+* This XML file does not appear to have any style information associated with it. The document tree is shown below. It is the metadata file.
+
+```xml
+<EntityDescriptor
+	xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+	xmlns:query="urn:oasis:names:tc:SAML:metadata:ext:query"
+	xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
+	xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+	xmlns:xenc="http://www.w3.org/2001/04/xmlenc#"
+	xmlns:xenc11="http://www.w3.org/2009/xmlenc11#"
+	xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport"
+	xmlns:x509qry="urn:oasis:names:tc:SAML:metadata:X509:query"
+	xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://govidp.example.net:10443/idp">
+	<IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+		<KeyDescriptor use="signing">
+			<ds:KeyInfo>
+				<ds:X509Data>
+					<ds:X509Certificate> MIIDdzCCAl+gAwIBAgIES3eb+zANBgkqhkiG9w0BAQsFADBsMRAwDgYDVQQGEwdVbmtub3duMRAw DgYDVQQIEwdVbmtub3duMRAwDgYDVQQHEwdVbmtub3duMRAwDgYDVQQKEwdVbmtub3duMRAwDgYD VQQLEwdVbmtub3duMRAwDgYDVQQDEwdVbmtub3duMB4XDTE2MDUyNDEzNDEzN1oXDTI2MDUyMjEz NDEzN1owbDEQMA4GA1UEBhMHVW5rbm93bjEQMA4GA1UECBMHVW5rbm93bjEQMA4GA1UEBxMHVW5r bm93bjEQMA4GA1UEChMHVW5rbm93bjEQMA4GA1UECxMHVW5rbm93bjEQMA4GA1UEAxMHVW5rbm93 bjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANdIhkOZeSHagT9ZecG+QQwWaUsi7OMv 1JvpBr/7HtAZEZMDGWrxg/zao6vMd/nyjSOOZ1OxOwjgIfII5+iwl37oOexEH4tIDoCoToVXC5iq iBFz5qnmoLzJ3bF1iMupPFjz8Ac0pDeTwyygVyhv19QcFbzhPdu+p68epSatwoDW5ohIoaLzbf+o OaQsYkmqyJNrmht091XuoVCazNFt+UJqqzTPay95Wj4F7Qrs+LCSTd6xp0Kv9uWG1GsFvS9TE1W6 isVosjeVm16FlIPLaNQ4aEJ18w8piDIRWuOTUy4cbXR/Qg6a11l1gWls6PJiBXrOciOACVuGUoNT zztlCUkCAwEAAaMhMB8wHQYDVR0OBBYEFMm4/1hF4WEPYS5gMXRmmH0gs6XjMA0GCSqGSIb3DQEB CwUAA4IBAQDVH/Md9lCQWxbSbie5lPdPLB72F4831glHlaqms7kzAM6IhRjXmd0QTYq3Ey1J88KS Df8A0HUZefhudnFaHmtxFv0SF5VdMUY14bJ9UsxJ5f4oP4CVh57fHK0w+EaKGGIw6TQEkL5L/+5Q ZZAywKgPz67A3o+uk45aKpF3GaNWjGRWEPqcGkyQ0sIC2o7FUTV+MV1KHDRuBgreRCEpqMoY5XGX e/IJc1EJLFDnsjIOQU1rrUzfM+WP/DigEQTPpkKWHJpouP+LLrGRj2ziYVbBDveP8KtHvLFsnexA /TidjOOxChKSLT9LYFyQqsvUyCagBb4aLs009kbW6inN8zA6 </ds:X509Certificate>
+				</ds:X509Data>
+			</ds:KeyInfo>
+		</KeyDescriptor>
+		<KeyDescriptor use="encryption">
+			<ds:KeyInfo>
+				<ds:X509Data>
+					<ds:X509Certificate> MIIDYTCCAkmgAwIBAgIEFt4OQjANBgkqhkiG9w0BAQsFADBhMQswCQYDVQQGEwJVSzEQMA4GA1UE CBMHQnJpc3RvbDEQMA4GA1UEBxMHQnJpc3RvbDESMBAGA1UEChMJRm9yZ2VSb2NrMQswCQYDVQQL EwJBTTENMAsGA1UEAxMEdGVzdDAeFw0xODA0MDMxNDIwNThaFw0yODAzMzExNDIwNThaMGExCzAJ BgNVBAYTAlVLMRAwDgYDVQQIEwdCcmlzdG9sMRAwDgYDVQQHEwdCcmlzdG9sMRIwEAYDVQQKEwlG b3JnZVJvY2sxCzAJBgNVBAsTAkFNMQ0wCwYDVQQDEwR0ZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOC AQ8AMIIBCgKCAQEAi7t6m4d/02dZ8dOe+DFcuUYiOWueHlNkFwdUfOs06eUETOV6Y9WCXu3D71db F0Fhou69ez5c3HAZrSVS2qC1Htw9NkVlLDeED7qwQQMmSr7RFYNQ6BYekAtn/ScFHpq8Tx4BzhcD b6P0+PHCo+bkQedxwhbMD412KSM2UAVQaZ+TW+ngdaaVEs1Cgl4b8xxZ9ZuApXZfpddNdgvjBeeY QbZnaqU3b0P5YE0s0YvIQqYmTjxh4RyLfkt6s/BS1obWUOC+0ChRWlpWE7QTEVEWJP5yt8hgZ5Me cTmBi3yZ/0ts3NsL83413NdbWYh+ChtP696mZbJozflF8jR9pewTbQIDAQABoyEwHzAdBgNVHQ4E FgQUDAvAglxsoXuEwI2NT1hFtVww2SUwDQYJKoZIhvcNAQELBQADggEBADiHqUwRlq1xdHP7S387 vMLOr+/OUgNvDUogeyrpdj5vFve/CBxSFlcoY215eE0xzj2+bQoe5To3s8CWkP9hqB3EdhaRBfCr d8Vpvu8xBZcxQzmqwNjmeDrxNpKes717t05fDGgygUM8xIBs29JwRzHzf7e0ByJjn9fvlUjDAGZ7 emCTN382F2iOeLC2ibVl7dpmsWZTINhQRbmq5L4ztOcjITk5WZnBF439oRRn68fWZVkOv2UqaKbk uMjgotNuot+ebHtOchEiwKz8VAK7O3/IgD6rfNBfz+c/WeoPcrfQBR4zfizw/ioR115RSywifzlw q5yziqyU04eP4wLr3cM= </ds:X509Certificate>
+				</ds:X509Data>
+			</ds:KeyInfo>
+			<EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p">
+				<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+			</EncryptionMethod>
+			<EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc">
+				<xenc:KeySize>128</xenc:KeySize>
+			</EncryptionMethod>
+		</KeyDescriptor>
+		<ArtifactResolutionService index="0" Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://govidp.example.net:10443/idp/ArtifactResolver/metaAlias/idp"/>
+		<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://govidp.example.net:10443/idp/IDPSloRedirect/metaAlias/idp" ResponseLocation="https://govidp.example.net:10443/idp/IDPSloRedirect/metaAlias/idp"/>
+		<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://govidp.example.net:10443/idp/IDPSloPOST/metaAlias/idp" ResponseLocation="https://govidp.example.net:10443/idp/IDPSloPOST/metaAlias/idp"/>
+		<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://govidp.example.net:10443/idp/IDPSloSoap/metaAlias/idp"/>
+		<ManageNameIDService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://govidp.example.net:10443/idp/IDPMniRedirect/metaAlias/idp" ResponseLocation="https://govidp.example.net:10443/idp/IDPMniRedirect/metaAlias/idp"/>
+		<ManageNameIDService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://govidp.example.net:10443/idp/IDPMniPOST/metaAlias/idp" ResponseLocation="https://govidp.example.net:10443/idp/IDPMniPOST/metaAlias/idp"/>
+		<ManageNameIDService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://govidp.example.net:10443/idp/IDPMniSoap/metaAlias/idp"/>
+		<NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
+		<NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+		<NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+		<NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</NameIDFormat>
+		<NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName</NameIDFormat>
+		<NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos</NameIDFormat>
+		<NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName</NameIDFormat>
+		<SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://govidp.example.net:10443/idp/SSORedirect/metaAlias/idp"/>
+		<SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://govidp.example.net:10443/idp/SSOPOST/metaAlias/idp"/>
+		<SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://govidp.example.net:10443/idp/SSOSoap/metaAlias/idp"/>
+		<NameIDMappingService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://govidp.example.net:10443/idp/NIMSoap/metaAlias/idp"/>
+		<AssertionIDRequestService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://govidp.example.net:10443/idp/AIDReqSoap/IDPRole/metaAlias/idp"/>
+		<AssertionIDRequestService Binding="urn:oasis:names:tc:SAML:2.0:bindings:URI" Location="https://govidp.example.net:10443/idp/AIDReqUri/IDPRole/metaAlias/idp"/>
+	</IDPSSODescriptor>
+</EntityDescriptor>
+```
+![](images/am401/am-saml-26.png)
+
+![](images/am401/am-saml-27.png)
+
+AM lets you create a remote entity either by uploading a metadata XML file, or by making a REST call and providing the metadata in JSON format.
+
+This is the SAML authentication request from AM as SP to remote IdP.
+
+```xml
+<samlp:AuthnRequest
+	xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" ID="s27845c3b947bab365dd2972df4ac2794a4e0f0a65" Version="2.0" IssueInstant="2022-07-28T04:25:55Z" Destination="https://govidp.example.net:10443/idp/SSORedirect/metaAlias/idp" ForceAuthn="false" IsPassive="false" ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" AssertionConsumerServiceURL="https://am.example.com:9443/login/AuthConsumer/metaAlias/alpha/sp">
+	<saml:Issuer
+		xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">https://am.example.com:9443/login
+	</saml:Issuer>
+	<samlp:NameIDPolicy
+		xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" SPNameQualifier="https://am.example.com:9443/login" AllowCreate="true">
+	</samlp:NameIDPolicy>
+	<samlp:RequestedAuthnContext
+		xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" Comparison="minimum">
+		<saml:AuthnContextClassRef
+			xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
+		</saml:AuthnContextClassRef>
+	</samlp:RequestedAuthnContext>
+</samlp:AuthnRequest>
+```
+
+This is the SAML authentication response from remote IdP to AM as SP.
+
+```xml
+<samlp:Response
+	xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" ID="s27802805d49eb7f633514947e78f5dc097eb61a58" InResponseTo="s27845c3b947bab365dd2972df4ac2794a4e0f0a65" Version="2.0" IssueInstant="2022-07-28T04:25:59Z" Destination="https://am.example.com:9443/login/AuthConsumer/metaAlias/alpha/sp">
+	<saml:Issuer
+		xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">https://govidp.example.net:10443/idp
+	</saml:Issuer>
+	<samlp:Status
+		xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">
+		<samlp:StatusCode
+			xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" Value="urn:oasis:names:tc:SAML:2.0:status:Success">
+		</samlp:StatusCode>
+	</samlp:Status>
+	<saml:Assertion
+		xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="s2c10ad8a9ddadfc27aad69ec646670c3b31b85bc4" IssueInstant="2022-07-28T04:25:59Z" Version="2.0">
+		<saml:Issuer>https://govidp.example.net:10443/idp</saml:Issuer>
+		<ds:Signature
+			xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+			<ds:SignedInfo>
+				<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></ds:CanonicalizationMethod>
+				<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></ds:SignatureMethod>
+				<ds:Reference URI="#s2c10ad8a9ddadfc27aad69ec646670c3b31b85bc4">
+					<ds:Transforms>
+						<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform>
+						<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></ds:Transform>
+					</ds:Transforms>
+					<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></ds:DigestMethod>
+					<ds:DigestValue>GEEjC7+78bk7Mudp5kMbPmLlT5LzTQWnFg0dQgcJrGY=</ds:DigestValue>
+				</ds:Reference>
+			</ds:SignedInfo>
+			<ds:SignatureValue>JKfwYWzUkGtKY9zXqhSLE/NmXlSdlNeDhUoT1gXjdlc952ryQEXhJoaH6CwfTWWUyY1SBLb+iWqq/8WADRm2cUbq8DhFp5Ozy0u4/rUa8pkTlByKNGDRtdZN7K4eIl8T5oj0fQu0drFv3DoVu/7Mow2l2Cb0xZNJNso9NFYP8EXYr4oI5O5MemqUI/pUwM3eue/FvxdTKwgDH7LU7ZxNNBMJy6L5fz/ooT/hOQ18nR2O3MblcconNpo8Q74NfKYU07WeuuAA2ugMJA+uHmlsVaPw6USIH/OGjxudlTR9OpKDj9sI1F7n+TF8yB3cZgWIDIyeRRQSmZYwKfCXTc56EQ==</ds:SignatureValue>
+			<ds:KeyInfo>
+				<ds:X509Data>
+					<ds:X509Certificate>MIIDdzCCAl+gAwIBAgIES3eb+zANBgkqhkiG9w0BAQsFADBsMRAwDgYDVQQGEwdVbmtub3duMRAwDgYDVQQIEwdVbmtub3duMRAwDgYDVQQHEwdVbmtub3duMRAwDgYDVQQKEwdVbmtub3duMRAwDgYDVQQLEwdVbmtub3duMRAwDgYDVQQDEwdVbmtub3duMB4XDTE2MDUyNDEzNDEzN1oXDTI2MDUyMjEzNDEzN1owbDEQMA4GA1UEBhMHVW5rbm93bjEQMA4GA1UECBMHVW5rbm93bjEQMA4GA1UEBxMHVW5rbm93bjEQMA4GA1UEChMHVW5rbm93bjEQMA4GA1UECxMHVW5rbm93bjEQMA4GA1UEAxMHVW5rbm93bjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANdIhkOZeSHagT9ZecG+QQwWaUsi7OMv1JvpBr/7HtAZEZMDGWrxg/zao6vMd/nyjSOOZ1OxOwjgIfII5+iwl37oOexEH4tIDoCoToVXC5iqiBFz5qnmoLzJ3bF1iMupPFjz8Ac0pDeTwyygVyhv19QcFbzhPdu+p68epSatwoDW5ohIoaLzbf+oOaQsYkmqyJNrmht091XuoVCazNFt+UJqqzTPay95Wj4F7Qrs+LCSTd6xp0Kv9uWG1GsFvS9TE1W6isVosjeVm16FlIPLaNQ4aEJ18w8piDIRWuOTUy4cbXR/Qg6a11l1gWls6PJiBXrOciOACVuGUoNTzztlCUkCAwEAAaMhMB8wHQYDVR0OBBYEFMm4/1hF4WEPYS5gMXRmmH0gs6XjMA0GCSqGSIb3DQEBCwUAA4IBAQDVH/Md9lCQWxbSbie5lPdPLB72F4831glHlaqms7kzAM6IhRjXmd0QTYq3Ey1J88KSDf8A0HUZefhudnFaHmtxFv0SF5VdMUY14bJ9UsxJ5f4oP4CVh57fHK0w+EaKGGIw6TQEkL5L/+5QZZAywKgPz67A3o+uk45aKpF3GaNWjGRWEPqcGkyQ0sIC2o7FUTV+MV1KHDRuBgreRCEpqMoY5XGXe/IJc1EJLFDnsjIOQU1rrUzfM+WP/DigEQTPpkKWHJpouP+LLrGRj2ziYVbBDveP8KtHvLFsnexA/TidjOOxChKSLT9LYFyQqsvUyCagBb4aLs009kbW6inN8zA6</ds:X509Certificate>
+				</ds:X509Data>
+			</ds:KeyInfo>
+		</ds:Signature>
+		<saml:Subject>
+			<saml:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" NameQualifier="https://govidp.example.net:10443/idp" SPNameQualifier="https://am.example.com:9443/login">n0xFKsQyzOpE1w7IoCdhd0u2ef9N</saml:NameID>
+			<saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+				<saml:SubjectConfirmationData InResponseTo="s27845c3b947bab365dd2972df4ac2794a4e0f0a65" NotOnOrAfter="2022-07-28T04:35:59Z" Recipient="https://am.example.com:9443/login/AuthConsumer/metaAlias/alpha/sp"></saml:SubjectConfirmationData>
+			</saml:SubjectConfirmation>
+		</saml:Subject>
+		<saml:Conditions NotBefore="2022-07-28T04:15:59Z" NotOnOrAfter="2022-07-28T04:35:59Z">
+			<saml:AudienceRestriction>
+				<saml:Audience>https://am.example.com:9443/login</saml:Audience>
+			</saml:AudienceRestriction>
+		</saml:Conditions>
+		<saml:AuthnStatement AuthnInstant="2022-07-28T04:25:59Z" SessionIndex="s2b9b200f22346b95a0041b23a405717d817d6b201">
+			<saml:AuthnContext>
+				<saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml:AuthnContextClassRef>
+			</saml:AuthnContext>
+		</saml:AuthnStatement>
+		<saml:AttributeStatement>
+			<saml:Attribute Name="govidp_mail">
+				<saml:AttributeValue
+					xmlns:xs="http://www.w3.org/2001/XMLSchema"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">user.41@example.com
+				</saml:AttributeValue>
+			</saml:Attribute>
+		</saml:AttributeStatement>
+	</saml:Assertion>
+</samlp:Response>
+
+```
