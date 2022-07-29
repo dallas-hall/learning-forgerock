@@ -52,6 +52,10 @@
     - [Labs](#labs-3)
   - [Lesson 4 - Deploying the Identity Platform to the Cloud](#lesson-4---deploying-the-identity-platform-to-the-cloud)
     - [Identity Platform](#identity-platform)
+    - [CDK & CDM](#cdk--cdm)
+    - [Cloud Environment Setup](#cloud-environment-setup)
+    - [Bundled Third Party Software](#bundled-third-party-software)
+    - [Kubernetes](#kubernetes)
     - [Labs](#labs-4)
 
 ## Lesson 1 - Installing AM
@@ -643,6 +647,19 @@ See https://backstage.forgerock.com/docs/am/7.1/security-guide/configuring-keyst
 
 ### Labs
 
+Working with an OIDC ID token for this exercise requires that the AM realm is configured with an OAuth2 Provider and an OIDC relying party profile (essentially an OAuth2 client) to test the configuration changes and view the key IDs used.
+
+To validate an ID token received from an OIDC Authorization Code grant type flow, you configure AM to expose its public keys on the internet. AM publishes signing keys for the OAuth2 service in the alpha realm at the following URL: http://am.example.com:8080/am/oauth2/alpha/connect/jwk_uri which is created from:
+* `https://{{jwks-www}}/oauth2/{[realm}}/connect/jwk_uri`
+  * The `{{jwks-www}}` part represents your AM server and path (am.example.com: 8080/am)
+  * The `{{realm}}` part would be `alpha`, resulting in the above URL.
+
+https://jwt.davetonge.co.uk can be used to validate JWT after exposing the public end points.
+
+![](images/am401/am-hardening-12.png)
+
+http://am.example.com:8080/am/encode.jsp can be used to create an encrypted secret for an AM secret store.
+
 ## Lesson 2 - Hardening AM (Auditing & Monitoring)
 
 ### Auditing
@@ -874,13 +891,15 @@ The ForgeRock Identity Platform is the only offering for access management, iden
 * Increased flexibility, availability, and scalability inherent in cloud and Kubernetes contexts.
 * Organizations with the ability to speed time-to-market while reducing complexity and saving time and money.
 
+### CDK & CDM
+
 The configuration provided by the ForgeRock [forgeops](https://github.com/ForgeRock/forgeops) Git repository is a basic installation that can be extended by developers to meet their requirements. Developers should create a fork of this repository, clone the fork, and modify the various configuration files. it:
 * Creates a Kubernetes deployment for the Identity Platform.
 * Provides default configurations for deployment of AM, IDM, and a shared DS. By default, IG is available and not deployed.
 * Provides Docker and Kustomize artifacts for deploying version 7.1 products to a Kubernetes cluster.
 * Uses Git release branches for a specific release of the repository files for deploying the Identity Platform.
-* Includes a Cloud Development Kit (CDK) providing a minimal sample deployment for development purposes.
-* Includes a Cloud Deployment Model (CDM) as a reference implementation for cloud deployments.
+* Includes a **Cloud Development Kit (CDK)** providing a minimal sample deployment for development purposes.
+* Includes a **Cloud Deployment Model (CDM)** as a reference implementation for cloud deployments.
 
 ![](images/am401/am-cloud-1.png)
 
@@ -898,6 +917,174 @@ The CDM is well-suited for a proof-of-concept deployment that can be used for va
 
 The CDM deployment basically follows the same deployment procedure as the CDK, with the exception of the Kustomize overlay that is used for the Kubernetes environment. The Kustomize overlays contain different optimizations, sizing, and placing of the Identity Platform components in the target environment.
 
+### Cloud Environment Setup
+
+Set up the cloud provider SDK and the Kubernetes cluster:
+* Install third-party software, including the cloud provider SDK.
+* Authenticate with the cloud provider and obtain cluster details.
+* Connect to the Kubernetes cluster, if it exists; otherwise create the cluster first.
+* Create a Kubernetes namespace.
+
+See https://backstage.forgerock.com/docs/forgeops/7.1/cdk/setup-cdk.html & https://backstage.forgerock.com/docs/forgeops/7.1/cdm/setup-cdm.html
+
+Supported environments are:
+* Minikube
+* GKE
+* EKS
+* AKS
+
+### Bundled Third Party Software
+
+All tools listed in the slide, except Helm, are used for deployment with the CDK; otherwise, all tools listed are used for deployment with the CDM.
+* Docker CE.
+* The Kubernetes command-line client `kubectl`.
+* Kustomize.
+* Cloud provider SDK, such as The Google Cloud SDK.
+* Helm to deploy the ingress controller.
+
+### Kubernetes
+
+A cluster needs to be created that supports a Kubernetes environment. This can be done in any of the cloud platforms that support Kubernetes.
+
+Cloud provider SDK commands are used to connect to a Kubernetes cluster.
+
+The external IP address of the cluster:
+* Must be mapped to a FQDN name in the domain name service so that you can access your cluster via the Internet.
+* Is mapped to its FQDN in the /etc/hosts file in the lab for this lesson.
+* Is needed for deploying the ingress controller.
+
+The external IP address needs to be determined so that you can deploy the ingress controller to accept a correct IP address for the FQDN.
+
+The CDK automatically installs other required packages such as the:
+* Secret Agent Operator
+* DS Operator
+* Necessary third-party components:
+  * Ingress Controller (if not already deployed)
+  * Certificate Manager
+
+Before you can access the Identity Platform Admin UI, you must obtain the randomly generated secrets that are generated when the Identity Platform is deployed using the CDK.
 
 ### Labs
 
+Various commands for software needed to run in GKE.
+* Docker CLI: `docker --version`
+* kubectl client: `kubectl version`
+* kustomize: `kustomize version`
+* k8s context-switching tool: `kubectx -h`
+* k8s namespace-switching tool: `kubens -h`
+* Google Cloud SDK: `gcloud -v`
+
+Google provides an administration console called Google Cloud Console to manage your GCP resources.
+
+Display the Google Cloud SDK information about the environment settings: `gcloud info`. The command output might be useful for troubleshooting if you experience issues with the Google Cloud SDK.
+
+Display the Google Cloud SDK authentication information: `gcloud auth list`.
+
+Initialize the Google Cloud SDK configuration settings: `gcloud init`.
+
+Change the project default compute engine zone: `gcloud config set compute/zone $NAME`
+
+Change the project default compute engine region: `gcloud config set compute/region $NAME`
+
+![](images/am401/am-cloud-5.png)
+
+Change the current project: `gcloud config set project $PROJECT_ID`. To access the GCP Project Info panel, select the Google Console VM and in the GCP console (if signed in), select the GCP navigation menu > Home
+
+Authenticate with Googe Cloud SDK: `gcloud auth login $EMAIL`
+
+To display your current GCP project ID and zone values: `gcloud info --format="text(config.project,config.properties.compute)"`
+
+![](images/am401/am-cloud-6.png)
+
+View your project's external IP: `gcloud compute addresses list` or `gcloud compute addresses list --format="text (address)"`
+
+Normally, you would use a DNS service to do hostname resolution. In this course, you use sudo to edit the `/etc/hosts` file, which is used for name resolution. The FQDN `dev.example.com` is resolved to the external IP address you added to your `/etc/hosts` file. The FQDN is used in the URLs that access the Identity Platform Admin UI, AM Admin UI, and IDM Admin UI pages, after the Identity Platform has been deployed.
+
+Note that the external IP address is needed in the next exercise, when you deploy the ingress controller for the Identity Platform to be accessible through a load balancer in the GCP environment. Currently, the external IP address is allocated and not used until the ingress controller is deployed.
+
+The cloud provider cluster needs to be created before you deploy the Identity Platform. When the CloudShare VM is created, a Terraform script is used to create the associated Google Cloud account with a GKE cluster.
+
+An ingress controller component needs to be deployed to the Kubernetes environment in your namespace so that external client applications are able to access the Identity Platform after it is deployed to the cluster. When you deploy the ingress controller, you must provide the external IP address of your cluster to configure the environment for external client access.
+
+```bash
+# Get the repo and switch to correct branch
+git clone https://github.com/ForgeRock/forgeops.git
+git checkout release/7.1.0
+
+# Update Helm chart which installs the Ingress Controller (IC)
+helm repo update
+
+# Get the IP address
+gcloud compute addresses list --format="text (address)"
+
+# Run the IC installer
+cd forgeops
+bin/ingress-controller-deploy.sh -g $IP_ADDRESS
+
+# View the installed IC
+k -n nginx get svc,po
+NAME                                         TYPE           CLUSTER-IP    EXTERNAL-IP     PORT(S)                      AGE
+service/ingress-nginx-controller             LoadBalancer   10.24.7.85    35.196.230.20   80:31329/TCP,443:32340/TCP   3m22s
+service/ingress-nginx-controller-admission   ClusterIP      10.24.11.24   <none>          443/TCP                      3m22s
+
+NAME                                            READY   STATUS    RESTARTS   AGE
+pod/ingress-nginx-controller-5fdccdbcfd-ptl4q   1/1     Running   0          3m22s
+
+# Deploy the CDK
+bin/cdk install --namespace frudev --fqdn $DOMAIN
+
+# Check the deployment
+k -n frudev get po
+NAME                           READY   STATUS    RESTARTS   AGE
+admin-ui-5ff5c55bd9-fvtr7      1/1     Running   0          36s
+am-7cd8f55b87-nszqj            1/1     Running   0          2m33s
+ds-idrepo-0                    1/1     Running   0          4m42s
+end-user-ui-59f84666fb-w2q6s   1/1     Running   0          35s
+idm-6db77b6f47-qgpf6           1/1     Running   0          2m32s
+login-ui-856678c459-wm9rw      1/1     Running   0          34s
+rcs-agent-54755574cc-gnpz5     1/1     Running   0          2m31s
+[forgerock@forgerock forgeops]$ k -n frudev get all
+NAME                               READY   STATUS    RESTARTS   AGE
+pod/admin-ui-5ff5c55bd9-fvtr7      1/1     Running   0          41s
+pod/am-7cd8f55b87-nszqj            1/1     Running   0          2m38s
+pod/ds-idrepo-0                    1/1     Running   0          4m47s
+pod/end-user-ui-59f84666fb-w2q6s   1/1     Running   0          40s
+pod/idm-6db77b6f47-qgpf6           1/1     Running   0          2m37s
+pod/login-ui-856678c459-wm9rw      1/1     Running   0          39s
+pod/rcs-agent-54755574cc-gnpz5     1/1     Running   0          2m36s
+
+NAME                  TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                                        AGE
+service/admin-ui      ClusterIP   10.24.10.135   <none>        8080/TCP                                       44s
+service/am            ClusterIP   10.24.4.39     <none>        80/TCP                                         2m41s
+service/ds-idrepo     ClusterIP   None           <none>        4444/TCP,1389/TCP,1636/TCP,8989/TCP,8080/TCP   4m48s
+service/end-user-ui   ClusterIP   10.24.15.175   <none>        8080/TCP                                       43s
+service/idm           ClusterIP   10.24.15.112   <none>        80/TCP                                         2m40s
+service/login-ui      ClusterIP   10.24.10.73    <none>        8080/TCP                                       43s
+service/rcs-agent     ClusterIP   10.24.7.215    <none>        80/TCP                                         2m40s
+
+NAME                          READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/admin-ui      1/1     1            1           42s
+deployment.apps/am            1/1     1            1           2m39s
+deployment.apps/end-user-ui   1/1     1            1           41s
+deployment.apps/idm           1/1     1            1           2m38s
+deployment.apps/login-ui      1/1     1            1           40s
+deployment.apps/rcs-agent     1/1     1            1           2m37s
+
+NAME                                     DESIRED   CURRENT   READY   AGE
+replicaset.apps/admin-ui-5ff5c55bd9      1         1         1       43s
+replicaset.apps/am-7cd8f55b87            1         1         1       2m40s
+replicaset.apps/end-user-ui-59f84666fb   1         1         1       42s
+replicaset.apps/idm-6db77b6f47           1         1         1       2m39s
+replicaset.apps/login-ui-856678c459      1         1         1       41s
+replicaset.apps/rcs-agent-54755574cc     1         1         1       2m38s
+
+NAME                         READY   AGE
+statefulset.apps/ds-idrepo   1/1     4m49s
+
+# Delete the deployment
+bin/cdk delete
+bin/ingress-controller-deploy.sh -d
+bin/ds-operator delete
+```
+
+If you use `watch -d`, then the changes are highlighted as well.
