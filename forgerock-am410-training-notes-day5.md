@@ -27,7 +27,7 @@
     - [Backup Steps](#backup-steps)
     - [Upgrade Steps](#upgrade-steps)
     - [Restore From Backup](#restore-from-backup)
-  - [Lesson 2 - Hardening AM Security](#lesson-2---hardening-am-security)
+  - [Lesson 2 - Hardening AM (Security)](#lesson-2---hardening-am-security)
     - [Considerations](#considerations)
     - [Communications](#communications)
     - [Changing Defaults](#changing-defaults)
@@ -39,7 +39,11 @@
     - [Keystores](#keystores)
     - [Secret Stores](#secret-stores)
     - [Key Resolution](#key-resolution)
+    - [Default AM Keystore](#default-am-keystore)
     - [Labs](#labs-1)
+  - [Lesson 2 - Hardening AM (Auditing & Monitoring)](#lesson-2---hardening-am-auditing--monitoring)
+    - [Auditing](#auditing)
+    - [Monitoring](#monitoring)
   - [Lesson 3 -  Clustering AM](#lesson-3----clustering-am)
     - [High Availability](#high-availability)
     - [Scalability](#scalability)
@@ -371,8 +375,6 @@ The AM instance you install in this lesson is the first server you create for a 
 
 ![](images/am401/am-install-21.png)
 
-
-
 ## Lesson 1 - Upgrading AM
 
 ### Versions
@@ -438,7 +440,7 @@ It is not enough to back up a deployment. You must be able to restore it. That s
   * Restore the AM container and configuration folders from the last backup.
   * Restart AM.
 
-## Lesson 2 - Hardening AM Security
+## Lesson 2 - Hardening AM (Security)
 
 ### Considerations
 
@@ -543,6 +545,11 @@ Once a secret store has been created, mappings provide the ability to rotate act
 * Valid (non-active) secrets: Any valid value key for signature verification and decryption.
 * Named secrets: A specifically selected key for validation or decryption; for example, a key identified using the JWT Key id (kid) header.
 
+Secrets (aliases) are managed by:
+* Rotating an alias
+* Retiring an alias
+* Revoking an alias
+
 ### Keystores
 
 ![](images/am401/am-hardening-4.png)
@@ -565,6 +572,10 @@ The AM keystore is used by:
 * Amster
 * Persistent cookie node (in trees)
 
+AM's startup (bootstrap) process requires two password strings. ForgeRock recommends that you use the AM keystore as the bootstrap keystore. See https://backstage.forgerock.com/docs/am/7.1/security-guide/configuring-keystores.html#proc-bootstrap-keystore
+
+### Secret Stores
+
 Secret stores are used by:
 * Client-based sessions
 * Web and Java agents
@@ -573,10 +584,11 @@ Secret stores are used by:
 * Authentication trees
 * SAML2 federation
 
-AM's startup (bootstrap) process requires two password strings. ForgeRock recommends that you use the AM keystore as the bootstrap keystore. See https://backstage.forgerock.com/docs/am/7.1/security-guide/configuring-keystores.html#proc-bootstrap-keystore
+A secret store can be created with these scopes:
+* A global store
+* A realm store
 
-### Secret Stores
-
+Secret stores can be created as:
 * Keystore: Includes JKS, JCEKS, PKCS11, and PKCS12.
 * HSM stores.
 * File based: Directories with encrypted and/or encoded secrets.
@@ -594,6 +606,16 @@ For production deployments, generate a new keystore with the key aliases you nee
 * Key aliases are not migrated from one keystore to another when changing the keystore configuration. Prepare the new keystore before configuring it.
 * Restart AM if you make keystore changes, such as adding or removing keys, or modifying key or keystore passwords.
 
+![](images/am401/am-hardening-8.png)
+
+![](images/am401/am-hardening-9.png)
+
+![](images/am401/am-hardening-10.png)
+
+Mapping secret IDs to an alias is supported by keystore and HSM secret store types.
+
+![](images/am401/am-hardening-11.png)
+
 ### Key Resolution
 
 ![](images/am401/am-hardening-5.png)
@@ -607,9 +629,21 @@ Stores can be configured per realm or globally, but the realm configuration take
 
 ![](images/am401/am-hardening-7.png)
 
+### Default AM Keystore
 
+By default, AM installations provide a JCEKS keystore with several preconfigured test-only key aliases. For production deployments, generate a new keystore with your own key aliases, either by:
+* Replacing the AM keystore, or
+* Modifying the AM keystore configuration.
+
+See https://backstage.forgerock.com/docs/am/7.1/security-guide/configuring-keystores.html#proc-bootstrap-keystore
 
 ### Labs
+
+## Lesson 2 - Hardening AM (Auditing & Monitoring)
+
+### Auditing
+
+### Monitoring
 
 ## Lesson 3 -  Clustering AM
 
@@ -722,10 +756,38 @@ See https://backstage.forgerock.com/docs/am/7.1/cts-guide/cts-openam-config.html
 
 ### Labs
 
+![](images/am401/am-cluster-14.png)
 
+![](images/am401/am-cluster-15.png)
+
+![](images/am401/am-cluster-16.png)
+
+Your existing cluster topology has one AM running with an external DS that is replicating its data with a second external DS. You now add a second AM server to the cluster topology, which includes:
+* Deploying the AM `.war` file in the `am2` Tomcat server.
+* Starting the `am2` server.
+* Obtaining the encryption key from the first AM server that is needed for the second AM installation.
+* Installing AM in the `am2` server with the same encryption key, configuration store, and identity store as the existing `am1` instance. By sharing the same encryption key and external DS, the second AM server can participate in the AM cluster. Creating an AM site configuration is optional.
+
+To obtain the password encryption key from `am1`, use either the AM Admin UI or the REST API.
+
+It is recommended to initially configure the CTS settings as AM server default properties in a cluster topology, so that all AM servers in the cluster use a common CTS architecture.
+
+The value in AM Admin UI > Deployment > Servers > `$SITE` > Advanced: `com.iplanet.am.lbcookie.value` is stored in the `amlbcookie`.  This value determines what server you are on. You can view this in a browser by:
+* Firefox - Dev tools > Storage > Cookies
+* Chrome - Dev tools > Application > Cookies
+
+In many deployments, AM determines the base URL of a provider using the incoming HTTP request. However, the base URL of a provider may not be correctly derived from the incoming HTTP request, when the request is routed through a proxy server, such as the HAProxy load balancer. The load balancer / proxy needs to be configured to forward the `X-Forwarded-*` headers onto AM. The 3 headers are:
+1. `X-Forwarded-Proto`  is a de-facto standard header for identifying the protocol (HTTP or HTTPS) that a client used to connect to your proxy or load balancer. - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto
+2. `X-Forwarded-Host` is a de-facto standard header for identifying the original host requested by the client in the `Host` HTTP request header. - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host
+3. `X-Forwarded-Port` helps you identify the destination port that the client used to connect to the load balancer. - https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/x-forwarded-headers.html#x-forwarded-port
+
+See https://backstage.forgerock.com/docs/am/7/security-guide/reverse-proxy.html#configure-base-url-provider
+
+![](images/am401/am-cluster-17.png)
+
+Note that the secondary server configuration is generally best done in the server defaults for the cluster configuration. This means that all the AM instances in the cluster inherit this change. When you modify the CTS configuration, you need to restart all the AM servers in the cluster. However, you need to restart the AM servers after modifying the configuration store and identity store settings.
 
 ## Lesson 4 - Deploying the Identity Platform to the Cloud
-
 
 ###
 
