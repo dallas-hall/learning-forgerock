@@ -51,6 +51,7 @@
     - [Creating The Cluster](#creating-the-cluster)
     - [Labs](#labs-3)
   - [Lesson 4 - Deploying the Identity Platform to the Cloud](#lesson-4---deploying-the-identity-platform-to-the-cloud)
+    - [Identity Platform](#identity-platform)
     - [Labs](#labs-4)
 
 ## Lesson 1 - Installing AM
@@ -719,6 +720,8 @@ You can use tools such as Grafana to query the repository, organize the data, an
 
 ### Labs
 
+When the name of the cookie is changed on a production system, you invalidate the sessions for all users that still have a valid cookie.
+
 ## Lesson 3 -  Clustering AM
 
 ### High Availability
@@ -863,7 +866,38 @@ Note that the secondary server configuration is generally best done in the serve
 
 ## Lesson 4 - Deploying the Identity Platform to the Cloud
 
-###
+### Identity Platform
+
+The ForgeRock Identity Platform is the only offering for access management, identity management, user-managed access, directory services, and an identity gateway, designed and built as a single, unified platform. It provides:
+* Docker images with evaluation-only versions of AM, ForgeRock Identity Management (IDM), DS, and IG components.
+* Sample configurations in the ForgeRock forgeops Git repository that use DevOps tools to support cloud-agnostic deployment.
+* Increased flexibility, availability, and scalability inherent in cloud and Kubernetes contexts.
+* Organizations with the ability to speed time-to-market while reducing complexity and saving time and money.
+
+The configuration provided by the ForgeRock [forgeops](https://github.com/ForgeRock/forgeops) Git repository is a basic installation that can be extended by developers to meet their requirements. Developers should create a fork of this repository, clone the fork, and modify the various configuration files. it:
+* Creates a Kubernetes deployment for the Identity Platform.
+* Provides default configurations for deployment of AM, IDM, and a shared DS. By default, IG is available and not deployed.
+* Provides Docker and Kustomize artifacts for deploying version 7.1 products to a Kubernetes cluster.
+* Uses Git release branches for a specific release of the repository files for deploying the Identity Platform.
+* Includes a Cloud Development Kit (CDK) providing a minimal sample deployment for development purposes.
+* Includes a Cloud Deployment Model (CDM) as a reference implementation for cloud deployments.
+
+![](images/am401/am-cloud-1.png)
+
+The CDK is for developers to quickly deploy the Identity Platform and configure and customize AM and IDM. If you have access to a cluster, you can install the CDK in a namespace on your cluster. However, if you don't have access to a cloud-based cluster, you can deploy the CDK on a local computer running Minikube.
+
+![](images/am401/am-cloud-2.png)
+
+CDK deployments are suitable for demonstration and proof-of-concept purposes. It is a quick way to get the Identity Platform up and running on Kubernetes.
+
+![](images/am401/am-cloud-3.png)
+
+The CDM is well-suited for a proof-of-concept deployment that can be used for validation against ForgeRock published benchmarks.
+
+![](images/am401/am-cloud-4.png)
+
+The CDM deployment basically follows the same deployment procedure as the CDK, with the exception of the Kustomize overlay that is used for the Kubernetes environment. The Kustomize overlays contain different optimizations, sizing, and placing of the Identity Platform components in the target environment.
+
 
 ### Labs
 
