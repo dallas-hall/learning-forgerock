@@ -27,13 +27,26 @@
     - [Backup Steps](#backup-steps)
     - [Upgrade Steps](#upgrade-steps)
     - [Restore From Backup](#restore-from-backup)
-    - [Labs](#labs-1)
   - [Lesson 2 - Hardening AM Security](#lesson-2---hardening-am-security)
-    - [Labs](#labs-2)
+    - [Considerations](#considerations)
+    - [Communications](#communications)
+    - [Changing Defaults](#changing-defaults)
+    - [Secure Authentication](#secure-authentication)
+    - [Secure Administration](#secure-administration)
+    - [Secrets](#secrets)
+    - [Keys & Certificates](#keys--certificates)
+    - [Secrets](#secrets-1)
+    - [Keystores](#keystores)
+    - [Secret Stores](#secret-stores)
+    - [Key Resolution](#key-resolution)
+    - [Labs](#labs-1)
   - [Lesson 3 -  Clustering AM](#lesson-3----clustering-am)
-    - [Labs](#labs-3)
+    - [High Availability](#high-availability)
+    - [Scalability](#scalability)
+    - [Creating The Cluster](#creating-the-cluster)
+    - [Labs](#labs-2)
   - [Lesson 4 - Deploying the Identity Platform to the Cloud](#lesson-4---deploying-the-identity-platform-to-the-cloud)
-    - [Labs](#labs-4)
+    - [Labs](#labs-3)
 
 ## Lesson 1 - Installing AM
 
@@ -425,22 +438,291 @@ It is not enough to back up a deployment. You must be able to restore it. That s
   * Restore the AM container and configuration folders from the last backup.
   * Restart AM.
 
-
-
-### Labs
-
 ## Lesson 2 - Hardening AM Security
 
-###
+### Considerations
+
+* Keep up-to-date on patches, cryptographic methods, and algorithms.
+* Turn off unnecessary or unused features.
+* Limit access to the servers hosting AM.
+* Consult security documentation for open standards (see notes for a list).
+
+### Communications
+
+* Use encryption wherever possible.
+* Configure HTTPS and LDAPS connections.
+* Secure sessions and cookies:
+  * Use host cookies instead of domain cookies.
+  * Enable HttpOnly cookies, if appropriate.
+  * Manage subdomain cookies subject to cross-domain single sign-on (CDSSO) implications.
+* Create your own signing keys, instead of using default test keys provided in AM.
+* Audit access and configuration changes.
+
+![](images/am401/am-hardening-1.png)
+
+* Enforce secure connections and use a reverse proxy (IG or a load balancer) to protect specified URLs.
+* Control access by network address.
+
+A reverse proxy exposes only the endpoints needed for an application. Endpoints can be secured by using a whitelist approach, which is supported by IG and some load balancers. See https://backstage.forgerock.com/docs/am/7/reference/endpoints-reference.html and https://backstage.forgerock.com/knowledge/kb/article/a23862128#lW0i8_
+
+### Changing Defaults
+
+Recommended changes are:
+* Change the DS administrator bind DN (default: `uid=admin`):
+  * Bind with specific administrative account rather than root DN account.
+* Change the session cookie name (default: `iPlanetDirectoryPro`).
+* Choose a unique AM context during installation: Instead of `.../am`, use `.../login`.
+* Remove the `demo` user or any test user accounts.
+* Set the list of valid `goto` and `gotoOnFail` URLs.
+* Secure access by tidying up trees (modules, and chains too, if any).
+
+![](images/am401/am-hardening-2.png)
+
+URLs can be relative to AM's URL, or absolute. By default, AM trusts all relative URLs and those absolute URLs that are in the same scheme, FQDN, and port as AM. This increases security against possible phishing attacks through open redirect.
+
+When adding URLs to the Validation Server, you can use the `*` wildcard, which matches all characters except `?`.
+
+### Secure Authentication
+
+Users can bypass a carefully designed tree, authenticate with a simpler tree, and gain access to resources. When you have finished development, carefully consider the set of authentication services and decide which services are needed, and in which context. In user realms:
+* Remove unused services and sample trees, such as `Example`, and sample services, such as `ldapService`.
+* Ensure inner trees cannot be used on their own:
+  * Do not request the username within an inner tree.
+  * Enforce access to specific services using policy environment conditions.
+* Disable module-based authentication (deprecated): Users should always go through a tree to authenticate.
+
+### Secure Administration
+
+The same AM login page, used by administrators to access the AM Admin UI, can be used by non-administrative users to access the AM End User UI. Administrators have complete access; non-administrative users can only access their user profile page.
+
+It is best practice to separate administrative users and end users into separate realms, keeping the administrators in the Top Level Realm.
+
+* Privileges are assigned to a group of users at the realm level:
+  * Create a group in realm > Identities > Groups > Add Group.
+  * Select the group > Members to add users, and group > Privileges to assign realm privileges.
+* Delegated administrators can perform tasks in a realm and its subrealms.
+* Delegation is enabled through policies internal to AM.
+
+See https://backstage.forgerock.com/docs/am/7.1/security-guide/securing-administration.html#realm-privileges-delegation-ref
+
+### Secrets
+
+AM depends on signing and encryption to protect network communication and to keep data confidential and unalterable.
+* **Encryption** makes it possible to protect sensitive data, encoding it so that only authorized parties can access it.
+* **Signing** allows the receiver of a piece of data to validate the sender's identity and ensures that the data has not been tampered with.
+
+A secret ID is a unique reference used to configure a key. Each cryptographic operation using a specific algorithm has a static secret ID.
+
+See https://backstage.forgerock.com/docs/am/7.1/security-guide/secret-mapping.html#secret-id-mappings
+
+### Keys & Certificates
+
+Keys are used to:
+* Sign data.
+* Encrypt data.
+
+Certificates:
+* Contain public keys.
+* Establish trust when issued and signed (verified) by a trusted authority, known as a Certificate Authority.
+* Provide a link between a public key and the verified entity.
+* Provide a way of distributing trusted public encryption keys.
+
+Public key encryption requires a public key and a private key to be generated for an application. Data encrypted with the public key can only be decrypted using the related private key. Conversely, data encrypted with the private key can only be decrypted with the associated public key.
+
+The private key is carefully protected and only the owner can decrypt messages encrypted with the public key.
+The public key is embedded into a digital certificate along with additional information about the owner of the public key, such as name, street address, and email address.
+
+A private key and digital certificate provide an identity for the application. The data embedded in a digital certificate is verified by a trusted CA and digitally signed with the CA digital certificate.
+
+![](images/am401/am-hardening-3.png)
+
+### Secrets
+
+Once a secret store has been created, mappings provide the ability to rotate active secrets and retire non-active secrets. Secret types are:
+* Active secrets: The current key for signature generation and encryption.
+* Valid (non-active) secrets: Any valid value key for signature verification and decryption.
+* Named secrets: A specifically selected key for validation or decryption; for example, a key identified using the JWT Key id (kid) header.
+
+### Keystores
+
+![](images/am401/am-hardening-4.png)
+
+To store keys or secrets, AM uses:
+* The AM keystore is used by some features, such as starting up AM. It can be configured globally (for all instances in a deployment), or per individual server.
+* AM secret stores are repositories for cryptographic keys and credentials. They can be configured globally (for all instances in the site), or by realm.
+
+During installation, AM creates a JKS and a JCEKS keystore with several self-signed key aliases for demo and test purposes only. The AM keystore and the default secret stores use the default JCEKS keystore.
+* The keystore is located at `/path/to/amconfig/security/keystores/ keystore.jceks`
+* The password to access the JCEKS keystore is located in the hidden `/path/to/amconfig/security/secrets/default/.storepass` file.
+
+See https://backstage.forgerock.com/docs/am/7.1/security-guide/keys-secrets.html#about-default-keystores-secrets
+
+* The JKS keystore is not used by default, and can be safely deleted.
+* Do not use the default keys, keystores, and secret stores in a production environment.
+
+The AM keystore is used by:
+* User self-service
+* Amster
+* Persistent cookie node (in trees)
+
+Secret stores are used by:
+* Client-based sessions
+* Web and Java agents
+* Auth2 providers
+* The remote consent service
+* Authentication trees
+* SAML2 federation
+
+AM's startup (bootstrap) process requires two password strings. ForgeRock recommends that you use the AM keystore as the bootstrap keystore. See https://backstage.forgerock.com/docs/am/7.1/security-guide/configuring-keystores.html#proc-bootstrap-keystore
+
+### Secret Stores
+
+* Keystore: Includes JKS, JCEKS, PKCS11, and PKCS12.
+* HSM stores.
+* File based: Directories with encrypted and/or encoded secrets.
+* Environment and system property: Environment variables and system properties with encrypted and/or encoded secrets.
+* Google Cloud Key Management Service (Google KMS) stores.
+* Google Cloud Secret Manager (Google GSM) stores.
+* As an administrator, encrypt AM secrets with the https://am.example.com/am/encode.jsp URL.
+
+AM creates a default keystore of type JCEKS when installing a fresh instance or during an upgrade. There are no default secret stores in AM.
+* The `default-keystore` contains test keys.
+* The file-based `default-password-store` contains the secret to access the `default-keystore`.
+
+For production deployments, generate a new keystore with the key aliases you need.
+* Some AM features support different keystore configurations, and other features do not use the default keystore to store key aliases.
+* Key aliases are not migrated from one keystore to another when changing the keystore configuration. Prepare the new keystore before configuring it.
+* Restart AM if you make keystore changes, such as adding or removing keys, or modifying key or keystore passwords.
+
+### Key Resolution
+
+![](images/am401/am-hardening-5.png)
+
+Stores can be configured per realm or globally, but the realm configuration takes precedence. AM resolves secrets in the following order:
+* Any secret store configured for the realm, regardless of type.
+* Any secret store configured globally, regardless of type.
+  * If the key alias is not found, AM logs an error and the operation (for example, signing a client-based session token).
+
+![](images/am401/am-hardening-6.png)
+
+![](images/am401/am-hardening-7.png)
+
+
 
 ### Labs
 
 ## Lesson 3 -  Clustering AM
 
+### High Availability
 
-###
+For some organizations, having a system up and running at all times is fundamental. Ensuring high availability goals can be achieved by eliminating single points of failure and detecting failures immediately.
+
+![](images/am401/am-cluster-1.png)
+
+You could start with an evaluation instance of AM, and then make appropriate configuration changes to the AM instance to prepare it as the first instance of a cluster for a highly available architecture. Part of the preparation would involve migrating the embedded DS to one or more external DS stores.
+
+It is recommended that you start by installing your first AM instance with one or more external DS instances as the basis for creating a production-ready cluster.
+
+![](images/am401/am-cluster-2.png)
+
+The diagram illustrates an acceptable basis for a single instance in production. In this case, if one component fails, the whole deployment will be down. However, this topology is easier to scale horizontally to eliminate single points of failure.
+
+* Configuration is mostly static. Can use an embedded store but still not recommended.
+* Identity data is more dynamic.
+* CTS data is typically volatile (long-and short-lived).
+
+![](images/am401/am-cluster-3.png)
+
+To avoid a single point of failure and ensure high availability, all the components of the solution must be duplicated.
+
+AM instances will be put behind a load balancer, which will spread the load evenly between them. If one server is down, the load balancer will detect it and reroute all the requests to the healthy server.
+
+Similarly, the directory stores should be duplicated; however, do not use a load balancer in front of your directories. The issue is that all the data and all the updates must be replicated between the directory servers.
+
+![](images/am401/am-cluster-4.png)
+
+This is basic deployment architecture that is designed for high availability, by ensuring no single point of failure for AM and DS instances in the topology. The architecture can be extended for more redundancy and higher availability, by adding:
+* More DS instances in the replication architecture for the configuration, CTS, and identity stores.
+* More AM instances into the site or cluster configuration
+
+### Scalability
+
+Scalability is the capability of a system to handle growing loads, and its potential to accommodate the growth. The 2 approaches are:
+1. **Horizontal scaling:** Means adding more servers to a solution. This typically works well to increase the throughput for authentication. Horizontal growth is made easy by autonomous AM servers, and containerization facilitates its implementation.
+2. **Vertical scaling:** Means using bigger machines. Although this is an effective solution in some cases, for instance, for LDAP directories. It may not be as effective for AM servers. For example, if the session volume increases, it is tempting to increase the Java heap. Consider this action carefully, because the overall performance may degrade, due to garbage collection overheads for example.
+
+AM is a good candidate for horizontal scaling. Use two or more AM instances to provide availability, and implement horizontal scalability.
+
+![](images/am401/am-cluster-5.png)
+
+Scalability for AM is achieved horizontally by adding more servers to a deployment. However, a scalability bottleneck can occur as demand to access the active CTS is increased. More AM servers mean that more sessions need to be retrieved and updated in the CTS. However, the CTS cannot be scaled horizontally and can lead to a situation where performance degrades due to load on the active CTS. 3 possible solutions:
+1. Connect each AM instance to a unique CTS, which becomes the active CTS for the associated AM server, to ensure high availability with an active-passive mechanism.
+2. Enabling CTS affinity in AM deployments.
+3. Enabling client-based sessions.
+  1. Make sure black listed sessions is on. This is for logged out user sessions and makes sure logged out users can't get access unless they log back in.
+
+![](images/am401/am-cluster-6.png)
+
+Affinity deployments are well suited for deployments with many AM servers. In an affinity deployment, AM balances LDAP requests across one or more DS instances. Without this,  AM always routes LDAP requests for a specific CTS token to the same DS.
+
+![](images/am401/am-cluster-7.png)
+
+Client-based sessions are not persisted in the CTS. Sessions are stored in a token sent to the client as a JWT. Therefore, any server can deal with the session without the need to read it from the CTS. Some things not available with client sessions:
+* It is not possible to terminate a client-based session before its expiry time.
+* Session upgrade
+* Session quotas
+* Authorization policies with conditions that reference current session properties
+* CDSSO
+* Both session signing and encryption (browser size limitation)
+* SAML2 single logout
+* SNMP session monitoring
+* Session management by using the AM Admin UI
+* Session notification
+
+![](images/am401/am-cluster-8.png)
+
+A site is an AM concept and configurable name that defines a different URL used to access AM instances. The site URL refers to a load balancer with an external DNS name that is different from the one used when the AM instance was installed.
+
+You can create an AM cluster without configuring an AM site. Configuring a site name and assigning the AM servers to a site is optional.
+
+![](images/am401/am-cluster-9.png)
+
+AM servers manage sessions autonomously. They provide session access and management independently of each other. Sticky sessions may or may not be used.
+
+![](images/am401/am-cluster-10.png)
+
+Stickiness can be enabled in many load balancers by configuring them to recognise a special cookie that identifies the server to which a request has been routed. Configuring the load balancer to enable session stickiness can make use of the `amlbcookie`, which an AM server adds to response headers as a form of server identification.
+
+You should configure your load balancer to enforce stickiness wherever possible, because it can help improve overall performance.
+
+Terminating SSL at the load balancer ensures that internal communications between the AM servers runs unencrypted, allowing intrusion detection systems to be deployed. The decision to terminate SSL or not depends on your company security policy.
+
+CTS offers de facto session failover and persistence.
+
+CTS needs tuning to offer an optimal performance. See https://backstage.forgerock.com/docs/am/7.1/cts-guide/cts-reaper.html and https://backstage.forgerock.com/docs/am/7.1/cts-guide/cts-tuning-considerations.html
+
+### Creating The Cluster
+
+Key asks are:
+* Prepare the truststore and external DS stores.
+* Install the first AM server in the cluster.
+* Configure the external CTS store.
+* Configure External DS high availability in AM.
+* Configure the load balancer.
+* Configure the AM Base URL service.
+* Install additional AM instances in the cluster.
+
+![](images/am401/am-cluster-11.png)
+
+![](images/am401/am-cluster-12.png)
+
+See https://backstage.forgerock.com/docs/am/7.1/cts-guide/cts-openam-config.html#cts-testing-ha
+
+![](images/am401/am-cluster-13.png)
 
 ### Labs
+
+
 
 ## Lesson 4 - Deploying the Identity Platform to the Cloud
 
