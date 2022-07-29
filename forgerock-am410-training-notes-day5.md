@@ -44,13 +44,14 @@
   - [Lesson 2 - Hardening AM (Auditing & Monitoring)](#lesson-2---hardening-am-auditing--monitoring)
     - [Auditing](#auditing)
     - [Monitoring](#monitoring)
+    - [Labs](#labs-2)
   - [Lesson 3 -  Clustering AM](#lesson-3----clustering-am)
     - [High Availability](#high-availability)
     - [Scalability](#scalability)
     - [Creating The Cluster](#creating-the-cluster)
-    - [Labs](#labs-2)
-  - [Lesson 4 - Deploying the Identity Platform to the Cloud](#lesson-4---deploying-the-identity-platform-to-the-cloud)
     - [Labs](#labs-3)
+  - [Lesson 4 - Deploying the Identity Platform to the Cloud](#lesson-4---deploying-the-identity-platform-to-the-cloud)
+    - [Labs](#labs-4)
 
 ## Lesson 1 - Installing AM
 
@@ -155,6 +156,8 @@ Before deploying and installing an AM instance, you should consider the followin
   * Contains updates with non-breaking functionality in terms of API compatibility.
   * Excludes Requests for Enhancements (RFEs).
 * All software fully supported for three years, with an extra year for all critical fixes and high security fixes.
+
+**Note:** The instructor suggested to deploy `n-1` as he has experienced issues deploying `n` in the past.
 
 A security advisory is a patch bundle with security issues ranging from minor to critical. ForgeRock uses the following three key areas when assessing any potential security issues, assessed in this order of precedence:
 * Criticality: Where does the exploit sit on the severity line?
@@ -643,7 +646,78 @@ See https://backstage.forgerock.com/docs/am/7.1/security-guide/configuring-keyst
 
 ### Auditing
 
+The AM logging service is used for recording operational information about the AM components. AM writes log messages generated from audit events triggered by its instances, policy agents, and connected Identity Platform implementations. The AM logs are not designed to debug code and configuration problems within AM; that is the role of the debug files. In general the auditing logs covers:
+* Captures key auditing events.
+* Audit logs track processes and security data, such as:
+  * Authentication mechanism
+  * System access
+  * User and admin activity
+  * Error messages
+  * Configuration changes
+* Adheres to a consistent log structure across the Identity Platform.
+* Supports transaction ID propagation across the Identity Platform.
+
+Some features of auditing are:
+* Log configuration: Global and realm-based.
+* Audit event handlers: Where to publish the logs.
+* Tamper-evident logging: Digitally sign audit logs to ensure no tampering has taken place.
+* Data management: Log rotation and retention policies.
+* Blacklisting sensitive fields: For example, headers or cookies. Reverse DNS lookup: For network troubleshooting purposes.
+
+![](images/am401/am-audit-1.png)
+
+AM supports the types of audit event handlers as per the table above. See https://backstage.forgerock.com/docs/am/7.1/security-guide/implementing-audit.html#configuring-audit-event-handlers
+
+AM integrates log messages based on four different audit topics.
+1. Access: Who, what, when, and output for every access request.
+2. Activity: Changes made to sessions by end users.
+3. Authentication: When and how a subject is authenticated.
+4. Configuration: Which config was modified by whom with timestamp.
+
+A topic is a category of audit log events that has an associated one-to-one mapping to a schema type. Topics can be broadly categorized as access details, system activity, authentication operations, and configuration changes.
+
+It is possible to cross-reference activity on the different topics and log files by using the transaction ID.
+
+The audit log files reside in the `/path/to/amconfig/var/audit`.
+
 ### Monitoring
+
+Monitoring in general:
+* Is an important component when maintaining applications.
+* Verifies the health and availability of the application.
+* Helps identify any issues.
+* Gives insight into various areas that are used to fine tune the application.
+
+Monitoring AM:
+* Provides visibility of how a server performs.
+* Verifies health and availability.
+* Helps identify issues.
+* Gives insight with a view on tuning through info on:
+  * Heap
+  * Threads
+  * Garbage collection
+  * CPU utilization
+  * Java classes
+
+The goal of Java memory analysis is to optimize the garbage collection in such a way that its impact on application response time or CPU usage is minimized. It is equally important to ensure the stability of the application. Memory shortages and leaks often lead to instability.
+
+To identify memory-related instability or excessive garbage collection, we need to monitor our application with the appropriate tools.
+
+See https://backstage.forgerock.com/docs/am/7.1/maintenance-guide/monitoring-am.html for details of the various monitoring interfaces and REST APIs access that AM ships with. They are:
+* HTTP: Using a browser or HTTP client.
+* JMX: Using the RMI protocol and a JMX console.
+* SNMP: Any SNMP network console.
+* Prometheus: Third-party software used for processing and monitoring data.
+* CREST: AM REST API that exposes information about AM, in JSON format.
+* Graphite: AM pushes metrics data to the Graphite server.
+
+![](images/am401/am-monitoring-1.png)
+
+AM contains a monitoring framework that makes configuration and operational information available to AM administrators. AM exposes a ForgeRock Common REST (CREST) metrics API and Prometheus metrics endpoints. The CREST API can be queried by any REST client and the Prometheus endpoint can be queried by a Prometheus server.
+
+You can use tools such as Grafana to query the repository, organize the data, and display it in a meaningful way.
+
+### Labs
 
 ## Lesson 3 -  Clustering AM
 
