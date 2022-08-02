@@ -42,11 +42,11 @@ There are 3 common MFA approachs:
 1. OPT - An OTP is like a password but it can only be used once, thus it stands for **one-time password.**
 2. HOPT - The “H” in HOTP stands for Hash-based Message Authentication Code (HMAC). Put in layman’s terms, **HMAC-based One-time Password algorithm (HOTP)** is an event-based OTP where the moving factor in each code is based on a counter.
 
-![](images/am401/hopt.png)
+![](images/hopt.png)
 
 3. TOPT - **Time-based One-time Password (TOTP)** is a time-based OTP. The seed for TOTP is static, just like in HOTP, but the moving factor in a TOTP is time-based rather than counter-based.
 
-![](images/am401/topt.png)
+![](images/topt.png)
 
 AM supports the following MFA protocols:
 * **Open Authorization (OAuth)**: Enable **One time password (OTP)** authentication. It comprises HOTP and TOTP support.
@@ -56,11 +56,11 @@ AM supports the following MFA protocols:
 
 ### OAuth
 
-![](images/am401/am-mfa-1.png)
+![](images/am-mfa-1.png)
 
 The image above shows an example of a tree containing OAuth as second-factor authentication. The tree not only contains the authentication step itself, but also the registration and recovery steps. Note that you can organize your solution to have three separate trees instead: one for registration, one for authentication, and one for recovery.
 
-![](images/am401/am-mfa-2.png)
+![](images/am-mfa-2.png)
 
 In the MFA example tree above, the highlighted section represents the registration tree.
 
@@ -70,15 +70,15 @@ In the MFA example tree above, the highlighted section represents the registrati
 * When registering a device to use during a second-factor authentication, there is always a risk of the user losing access to their device, either because it is lost, broken, or stolen. Recovery codes address this issue. They are provided at registration time by the Recovery Code Display Node. The Recovery Code Display Node displays a window containing recovery codes. It is usually placed after a successful device registration in a tree.
 * When a user has lost their device, or if the device has been stolen, they won't be able to provide the verification code during the MFA process. In such a case, they can select the USE RECOVERY CODE button and a window asking for a recovery code is displayed. The corresponding node is called the Recovery Code Collector Decision node.
 
-![](images/am401/am-mfa-3.png)
+![](images/am-mfa-3.png)
 
 The MFA Registration Options node lets users decide if they want to use MFA to protect their account or not. The options are to register a device, get the ForgeRock Authenticator app, skip the step, or opt out. The text on each button on the display window can be customized and localized.
 
-![](images/am401/am-mfa-4.png)
+![](images/am-mfa-4.png)
 
 The Get Authenticator App displays an information window and links to the ForgeRock Authenticator app in the Apple and Google stores. The node message and the button text are configurable and can be localized.
 
-![](images/am401/am-mfa-5.png)
+![](images/am-mfa-5.png)
 
 When the authentication process reaches a Registration Node in the tree, such as the OAuth Registration node, it displays a QR code in the browser.
 
@@ -88,29 +88,29 @@ The QR code contains all the information needed to register the device with the 
 
 The authentication flow and actions required from the user are slightly different for each of the MFA mechanisms and are detailed in the corresponding sections.
 
-![](images/am401/am-mfa-6.png)
+![](images/am-mfa-6.png)
 
 If a user opts out of MFA, their decision should be persisted with their profile. This is the role of the Opt-out Multi-Factor Authentication node.
 
 However, if a user chooses the Skip option in the MFA Registration Options node, the decision applies for the current authentication only, and the user will be presented with the options again on the next authentication cycle.
 
-![](images/am401/am-mfa-7.png)
+![](images/am-mfa-7.png)
 
 When registering a device to use during a second-factor authentication, there is always a risk of the user losing access to their device, either because it is lost, broken, or stolen. Recovery codes address this issue. They are provided at registration time by the Recovery Code Display Node. If a user is unable to authenticate using the MFA method, OAuth in our example tree, they can select the Recovery Code button and provide a recovery code from their saved list. If they are successful, they can register a new device for MFA, for subsequent logins.
 
-![](images/am401/am-mfa-8.png)
+![](images/am-mfa-8.png)
 
 The Recovery Code Display Node displays a window containing recovery codes. It is usually placed after a successful device registration in a tree.
 
 Each code can be used only once. AM saves a hashed version of each code together with the user's profile. This is why codes can only be displayed once and the instructions provided recommend that users save the list in a safe place.
 
-![](images/am401/am-mfa-9.png)
+![](images/am-mfa-9.png)
 
 When a user has lost their device, or if the device has been stolen, they won't be able to provide the verification code during the MFA process. In such a case, they can select the USE RECOVERY CODE button and a window asking for a recovery code is displayed. The corresponding node is called the Recovery Code Collector Decision node. It can be configured to accept a recovery code created during an OAuth, a Push notification, or a WebAuthn authentication flow.
 
 If the recovery code hash corresponds to an entry with the user, and has not been used before, the flow proceeds through the True outcome. This gives the user a chance to register a new device. Alternatively, it could simply continue to the success exit for the tree; in which case, there should be a separate tree for people who need to register a new device.
 
-![](images/am401/am-mfa-10.png)
+![](images/am-mfa-10.png)
 
 To use OAuth authentication, the user must have a device with a camera and install the ForgeRock Authenticator app. Before authentication can take place, the device must be registered. The registration step can be done out-of-band using a specific registration tree in AM, or the registration and authentication steps can be part of the same tree. In this course, we focus on the latter approach.
 
@@ -123,7 +123,7 @@ During the following logins, AM requests a code for the user to enter. The user 
 * The OATH Registration node displays a QR code in the user's browser.
 * A tree needs to collect the username, before calling the OATH Token Verifier node. The OATH Token Verifier node uses the username to find out if a device is registered for the user for OATH authentication.
 
-![](images/am401/am-mfa-11.png)
+![](images/am-mfa-11.png)
 
 OAuth authentication can use one of two algorithms:
 1. Time-based one-time password (TOTP) generates a code based on the shared secret and the current time. This is the recommended one.
@@ -133,7 +133,7 @@ Margin set to accept some sync/time differences. A reset process is needed if th
 
 The OAuth Registration node displays a QR code in the user's browser. The settings are used to build the look and feel of the window, and to create the QR code itself. The ForgeRock Authenticator uses the information received in the QR code to adjust the settings to calculate the code for the user.
 
-![](images/am401/am-mfa-12.png)
+![](images/am-mfa-12.png)
 
 A tree needs to collect the username, before calling the OAuth Token Verifier node. The OAuth Token Verifier node uses the username to find out if a device is registered for the user for OAuth authentication.
 
@@ -145,9 +145,9 @@ If no device is registered, the Enter verification code window is not displayed 
 
 ### Push
 
-![](images/am401/am-mfa-13.png)
+![](images/am-mfa-13.png)
 
-![](images/am401/am-mfa-14.png)
+![](images/am-mfa-14.png)
 
 To use push notification authentication, the user must have a device with a camera and install the ForgeRock Authenticator app. Before authentication can take place, the device must be registered. During the following logins, AM instructs the push server to send a notification to the device, and waits for the user to approve the request on their device, using the ForgeRock Authenticator.
 
@@ -158,15 +158,15 @@ To use push notification authentication, the user must have a device with a came
 
 ### WebAuthN
 
-![](images/am401/am-mfa-15.png)
+![](images/am-mfa-15.png)
 
 Usernames and passwords are the leading attack vector for breaching accounts. With AM, you can:
 * Use FIDO2 WebAuthn registration and login nodes to design seamless, secure usernameless and passwordless trees.
 * Eliminate the risks of phishing, all forms of username and password theft, and replay attacks.
 
-![](images/am401/am-mfa-16.png)
+![](images/am-mfa-16.png)
 
-![](images/am401/am-mfa-17.png)
+![](images/am-mfa-17.png)
 
 To use WebAuthn, the user must have an external authenticator. Before authentication can take place, the authenticator must be registered.
 
@@ -177,7 +177,7 @@ If the user is connected using a client which does not support WebAuthn, the flo
 
 ### HOPT Via Email Or SMS
 
-![](images/am401/am-mfa-18.png)
+![](images/am-mfa-18.png)
 
 HOTP authentication uses the HMAC algorithm to generate an HOTP code. When the code is generated, it is sent to the user's email or phone number. This implies that the user must be known and have either an email or a phone number in their profile. It also means that a mail server must be configured. You must have access to a device which supports WebAuthn. This can be a Mac with Touch ID, a Windows machine with Face recognition, or a Yubikey.
 
@@ -207,7 +207,7 @@ The authentication process protecting resources and access to services does not 
 *  Analyze the context: Are they trusted or not?
 *  Adjust the behavior according to the analysis.
 
-![](images/am401/am-discovery-1.png)
+![](images/am-discovery-1.png)
 
 AM provides nodes which can discover some information about context before calling any authentication mechanism. This can be used to detect if a request comes from a bot or a human. If the request comes from a human, it can check the presence of a persistent cookie, which indicates that the user was trusted previously.
 
@@ -217,21 +217,21 @@ AM provides nodes which can discover some information about context before calli
 
 #### User Context
 
-![](images/am401/am-discovery-2.png)
+![](images/am-discovery-2.png)
 
 AM also lets you modify a user's experience based on contextual information gathered during authentication.  A request sent from a device that is known to AM, and trusted, can lead to a quicker and simpler authentication process. Similarly, checking if the browser used, or the IP address of the origin changed from one login to the next, may lead to a different authentication experience.
 
 #### Devices
 
-![](images/am401/am-discovery-3.png)
+![](images/am-discovery-3.png)
 
 Device profile nodes can collect device data, analyze the device context, or save the collected profile.
 
-![](images/am401/am-discovery-4.png)
+![](images/am-discovery-4.png)
 
 AM communicates with edge clients using a Java object called a callback. It is enough to understand that it is a way for AM to request information from the client.
 
-![](images/am401/am-discovery-5.png)
+![](images/am-discovery-5.png)
 
 The graphic above shows how collecting device profile information can help reduce the friction during a user login experience, while preserving or increasing security.
 
@@ -247,23 +247,23 @@ A device profile is a set of features associated to a device. Examples of inform
 * User-agent string based on the system information.
 * Current location of the device.
 
-![](images/am401/am-discovery-6.png)
+![](images/am-discovery-6.png)
 
 The Device Geofencing node defines trusted areas, based on coordinates and a radius.
 
-![](images/am401/am-discovery-7.png)
+![](images/am-discovery-7.png)
 
 It is important for security reasons to be able to evaluate the risk that a device has been jailbroken or rooted. Android and iOS provide various detection tools to evaluate that risk, from 0 to 1, with 1 a very high probability that the device is jailbroken or rooted.
 
 Although you can never assume that a low score means your device has not been jailbroken or rooted, it makes sense to request strong authentication, or reject access, if the score is very high. So, this approach is typically an extra layer of security for suspicious phones.
 
-![](images/am401/am-discovery-8.png)
+![](images/am-discovery-8.png)
 
 The location variance can address the problem of impossible travel. The approach is based on differences in location from one login to another. If a user normally logs in from Paris, but suddenly tries to log in from New York, asking for further authentication is reasonable.
 
 When processing the Device Location Match node, AM retrieves a saved profile for the user and the device, and compares the saved location to the current location.
 
-![](images/am401/am-discovery-9.png)
+![](images/am-discovery-9.png)
 
 The Device Match node analysis is based on differences between the device profile attributes from one login to another. If a user logged in last from a device with a specific profile, but suddenly tries to log in from the same device, and ten attributes have changed, it makes sense to ask for further authentication.
 
@@ -290,7 +290,7 @@ Some examples of context-related information that can be useful when evaluating 
 * Cookie or header values
 * Geolocation
 
-![](images/am401/am-risk-1.png)
+![](images/am-risk-1.png)
 
 There isn't a unique way to implement a solution when using trees. The solution we propose in the slide above is a generic example of what can be done. To illustrate the flexibility of intelligent authentication, the example uses scripts for most of its logic. But AM also provides interesting utility nodes and regularly adds new nodes and functionality to its offerings.
 
@@ -304,22 +304,22 @@ We mentioned the need to store data a few times. Where can AM store data?
 * In the session. If the data is needed by an application after authentication, it can be added to the session that will be created if the authentication is successful. e.g:
   * Session upgrade case
 
-![](images/am401/am-risk-2.png)
+![](images/am-risk-2.png)
 
-![](images/am401/am-risk-3.png)
+![](images/am-risk-3.png)
 
 ### Lock and unlock accounts
 
 Account lockout is an attempt to mitigate the risk linked to brute force attacks, where the attacker gets hold of a username and keeps trying to log in using various methods. To mitigate such an attack, AM provides a node that keeps track of failed login attempts, allows retries up to a threshold, then rejects retries when the limit is reached. AM also provides a node that can lock or unlock a user account.
 
-![](images/am401/am-account-lockout-1.png)
+![](images/am-account-lockout-1.png)
 
 The tree above is a very simple example of locking an account. It uses an Inner Login tree to authenticate the user. If the authentication fails, the flow proceeds to the Retry Limit Decision node.
 
 * The Retry Limit Decision node keeps track of each failed login attempt, and lets the user retry to log in up to the defined limit. By default, the Save Retry Limit to User setting is enabled, and the node persists the number of failed attempts with the user's profile.
 * In the configuration of the Account Lockout node, you can select LOCK or UNLOCK for the Lock Action setting.
 
-![](images/am401/am-account-lockout-2.png)
+![](images/am-account-lockout-2.png)
 
 Unlocking an account can be performed either by an administrator or using self-service. Typically, a user would call a customer help desk to unlock their account. After verifying the user's identity, the help desk administrator can change the Status setting from Inactive to Active in the AM Admin UI, or using an Identity Management solution.
 
@@ -331,7 +331,7 @@ Entitlements define a set of permissions for users. Entitlements can often be ex
 
 In an access management context, you can extend entitlements by changing the authentication context. e.g. a user provides stronger credentials in order to change the address in their profile.
 
-![](images/am401/am-context-check-1.png)
+![](images/am-context-check-1.png)
 
 The frequency at which the risk of an authorization request should be assessed depends on how sensitive the protected resource is.
 
@@ -339,21 +339,21 @@ An authenticated user can access low-risk resources without having to authentica
 
 To perform an action that presents some elevated risk or to request access to a sensitive resource, you can use step-up authentication which will ensure an elevated authentication level for the length of the session.
 
-![](images/am401/am-context-check-2.png)
+![](images/am-context-check-2.png)
 
 An authenticated user may be required to reauthenticate. Reauthentication would generate a different authentication context. The user can be requested to access the same tree or a different one. This is called **session upgrade**. For a session upgrade to be successful, the user must stay the same. The only way to step down is logging out.
 
-![](images/am401/am-context-check-3.png)
+![](images/am-context-check-3.png)
 
 Step-up authentication is a mechanism that requests further authentication when authenticated users want to access a resource which requires a higher level of assurance. Once access is granted, no further check will be needed for the length of the session.
 
-![](images/am401/am-context-check-4.png)
+![](images/am-context-check-4.png)
 
 The slide illustrates the step-up authentication flow using FR IG.
 
-![](images/am401/am-context-check-5.png)
+![](images/am-context-check-5.png)
 
-![](images/am401/am-context-check-6.png)
+![](images/am-context-check-6.png)
 
 There is no step-down authentication feature. Step-down can be enforced:
 * By adding an environment condition based on a time limit on the upgraded session.
@@ -363,9 +363,9 @@ Consider using transactional authorization instead.
 
 ### Transactional Authorisation
 
-![](images/am401/am-transaction-auth-1.png)
+![](images/am-transaction-auth-1.png)
 
-![](images/am401/am-transaction-auth-2.png)
+![](images/am-transaction-auth-2.png)
 
 Transactional authorization is the mechanism used to evaluate access to a request continuously. Continuously, in this context, means each time the resource is requested. e.g. each time you make a banking payment above a certain amount.
 
