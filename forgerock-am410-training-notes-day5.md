@@ -1085,6 +1085,7 @@ statefulset.apps/ds-idrepo   1/1     4m49s
 bin/cdk delete
 bin/ingress-controller-deploy.sh -d
 bin/ds-operator delete
+bin/secret-agent delete
 ```
 
 If you use `watch -d`, then the changes are highlighted as well.
