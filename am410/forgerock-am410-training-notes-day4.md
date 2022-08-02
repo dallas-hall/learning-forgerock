@@ -1,16 +1,16 @@
 # AM410 Day 4 - Federating Across Entities Using SAML2
 
 - [AM410 Day 4 - Federating Across Entities Using SAML2](#am410-day-4---federating-across-entities-using-saml2)
-  - [Lesson 1 - Implementing SSO Using SAML2](#lesson-1---implementing-sso-using-saml2)
-    - [Okta & Duo SAML Explanation](#okta--duo-saml-explanation)
-    - [SAML In AM](#saml-in-am)
-    - [Labs](#labs)
-      - [Set Up Federation](#set-up-federation)
-      - [Federation](#federation)
-  - [Lesson 2 - Delegating Authentication Using SAML2](#lesson-2---delegating-authentication-using-saml2)
-    - [AM As A SAML2 SP](#am-as-a-saml2-sp)
-    - [SAML2 Metadata](#saml2-metadata)
-    - [Labs](#labs-1)
+	- [Lesson 1 - Implementing SSO Using SAML2](#lesson-1---implementing-sso-using-saml2)
+		- [Okta & Duo SAML Explanation](#okta--duo-saml-explanation)
+		- [SAML In AM](#saml-in-am)
+		- [Labs](#labs)
+			- [Set Up Federation](#set-up-federation)
+			- [Federation](#federation)
+	- [Lesson 2 - Delegating Authentication Using SAML2](#lesson-2---delegating-authentication-using-saml2)
+		- [AM As A SAML2 SP](#am-as-a-saml2-sp)
+		- [SAML2 Metadata](#saml2-metadata)
+		- [Labs](#labs-1)
 
 ## Lesson 1 - Implementing SSO Using SAML2
 
@@ -30,7 +30,7 @@ SAML provides a way to authenticate users to SP provided third-party web apps (e
 
 SAML is the common underlying protocol that makes web-based SSO possible. A company maintains a single login page, single or multiple identity stores, and various authentication rules. Then they can easily configure any web app that supports SAML to allow their users to log in all web apps from the same login screen with a single password. It also has the security benefit of neither forcing users to maintain and potentially reuse passwords for every web app they need access to, nor exposing passwords to those web apps.
 
-![](images/am401/saml-1.png)
+![](images/saml-1.png)
 
 1. Bob walks to the Wristband Tent, where his ID is checked and a wristband is provided.
    1. The Wristband Tent is the IdP, it verifies Bob's identity to make sure he meets the criteria to get a wristband.
@@ -41,11 +41,11 @@ There are two different sign-in flows for which authentication can be handled by
 1. SP-initiated flow.
 2. IdP-initiated flow.
 
-![](images/am401/saml-2.png)
+![](images/saml-2.png)
 
 SP-initiated flow occurs when the user first navigates to the SP, getting redirected to the IdP with a SAML request, and then redirected back to the SP with a SAML assertion.
 
-![](images/am401/saml-3.png)
+![](images/saml-3.png)
 
 IdP-initiated flow occurs when the user first navigates to the IdP (typically a login page or dashboard), and then going to the SP with a SAML assertion.
 
@@ -69,11 +69,11 @@ SPs and IdPs participating in a federation need a common understanding about:
   * Requests, responses, and assertions
   * Facilitate communication at runtime
 
-![](images/am401/am-saml-1.png)
+![](images/am-saml-1.png)
 
 The CoT is a group of federated entities, normally the federation partners, who have come together to form a trusted federation. Entities in the federation share security and connection information with each other, and create a trust relationship by which they can exchange and utilize federated identity information between them.
 
-![](images/am401/am-saml-2.png)
+![](images/am-saml-2.png)
 
 SP-initiated means that the federation is initiated and controlled by the SP.
 
@@ -85,17 +85,17 @@ SP-initiated means that the federation is initiated and controlled by the SP.
 6. SP processes the response.
 7. SP proceeds with the flow.
 
-![](images/am401/am-saml-3.png)
+![](images/am-saml-3.png)
 
 **Artifact binding** defines the way the assertion created by the IdP is transmitted to the SP. It ensures that the assertion is never exposed to the client; the client is given an artifact (a unique semi-random number) that can be used by the SP to retrieve the assertion from the IdP. The artifact binding does require that the SP can reach the IdP directly. It uses Simple Object Access Protocol (SOAP) to communicate with the IdP.
 
-![](images/am401/am-saml-4.png)
+![](images/am-saml-4.png)
 
-![](images/am401/am-saml-5.png)
+![](images/am-saml-5.png)
 
 IdP-initiated means that the federation is initiated and controlled by the IdP.
 
-![](images/am401/am-saml-6.png)
+![](images/am-saml-6.png)
 
 The process of associating the IdP and SP accounts correctly is called **linking accounts.** To be able to perform account linking, something must be present in the assertion in order to link the authenticated user with a local account on the SP. That can take two forms:
 1. Common key, a common key is used to link the accounts.
@@ -107,7 +107,7 @@ The process of associating the IdP and SP accounts correctly is called **linking
    1. Requires user to log in to IdP only.
    2. Called auto-federation.
 
-![](images/am401/am-saml-7.png)
+![](images/am-saml-7.png)
 
 * AM as an IdP is called the hosted IdP.
   * Monitoring the SSO service endpoint.
@@ -117,21 +117,21 @@ The process of associating the IdP and SP accounts correctly is called **linking
   * Sending the response.
 * Third-party SP is called remote SP.
 
-![](images/am401/am-saml-8.png)
+![](images/am-saml-8.png)
 
-![](images/am401/am-saml-9.png)
+![](images/am-saml-9.png)
 
-![](images/am401/am-saml-10.png)
+![](images/am-saml-10.png)
 
-![](images/am401/am-saml-11.png)
+![](images/am-saml-11.png)
 
 The IdP can return profile attributes of the principal. It checks its configuration to find out which attributes need to be returned. That process is governed by the IdP attribute mapper.
 
-![](images/am401/am-saml-12.png)
+![](images/am-saml-12.png)
 
 Trust and SSO are two separate concepts. In SAML2, trust is established between an SP and an IdP. This trust relationship allows things such as data sharing. There is no trust relationship across SPs, but there is SSO functionality for all of them.
 
-![](images/am401/am-saml-13.png)
+![](images/am-saml-13.png)
 
 Entities within the same realm are able to use SSO even if they belong to separate CoTs.
 
@@ -177,9 +177,9 @@ Request
 </samlp:AuthnRequest>
 ```
 
-![](images/am401/am-saml-14.png)
+![](images/am-saml-14.png)
 
-![](images/am401/am-saml-15.png)
+![](images/am-saml-15.png)
 
 Response
 
@@ -254,11 +254,11 @@ Response
 </samlp:Response>
 ```
 
-![](images/am401/am-saml-16.png)
+![](images/am-saml-16.png)
 
-![](images/am401/am-saml-17.png)
+![](images/am-saml-17.png)
 
-![](images/am401/am-saml-18.png)
+![](images/am-saml-18.png)
 
 So far, you have observed how users can get access to a service automatically, simply because they are authenticated to the IdP. If you add a new service to the CoT and set up federation between the IdP and that new SP, you will be able to achieve SSO across SP1 and SP2. So when you log into the IdP and have an active session all subsequent logins to the SP don't require you to login.
 
@@ -268,7 +268,7 @@ So far, you have observed how users can get access to a service automatically, s
 
 If AM is the SP then it is called a hosted SP. The third-party IdPs are called remote IdPs.
 
-![](images/am401/am-saml-19.png)
+![](images/am-saml-19.png)
 
 An can SP can start a federation process. Typically, federation will start with a user trying to access a web page or a service using a browser.
 * End user wants to access a resource.
@@ -289,19 +289,19 @@ Standalone mode:
   * Uses parameters to indicate the entities taking part and potentially overwrite defaults. e.g. `https://am.example.com/login/saml2/jsp/spSSOInit.jsp?idpEntityID=https%3A%2F%2Fgovidp.example.net%2Fidp&metaAlias=/sp`
 * Supports SP-initiated and IdP-initiated SSO and SLO.
 
-![](images/am401/am-saml-20.png)
+![](images/am-saml-20.png)
 
 Once the SAML2 request has been sent, the SP must wait until it receives a response from the IdP. That response must be sent to the assertion consumer service.
 
 To validate the response, the SP must compare the content of the response with information it holds in its configuration or cache. It must validate the response itself, and then the assertion contained in the response.
 
-![](images/am401/am-saml-21.png)
+![](images/am-saml-21.png)
 
 The SP retrieves the information held in the assertion and links the principal with a local user. It is possible to federate users who do not have an account with the SP specifically. In such cases, you could link the user to an anonymous account on the SP. e.g. uni library allowing students access to their website using their student account, yet the website doesn't care who the student is.
 
 To link the principal to a local account, the SP verifies the `NameID` format. If it is persistent, it retrieves the user associated with the provided key. If no such key exists, it means it is a first access for the user, and the user is asked to authenticate locally. If attributes are used, the SP will try to find the user with the corresponding attribute.
 
-![](images/am401/am-saml-22.png)
+![](images/am-saml-22.png)
 
 What happens once the account is linked locally will depend on the business requirements and your implementation. In AM, a local session must always be created. Once the local user is retrieved, AM as an SP creates a local session and injects all the attributes from the assertion in the session.
 
@@ -315,7 +315,7 @@ Metadata includes information about the supported identifiers, binding supported
 
 Metadata can be shared informally (e.g. email) and does not have to follow the standard SAML2 metadata format. In such cases, setting up the federation would be a manual process.
 
-![](images/am401/am-saml-23.png)
+![](images/am-saml-23.png)
 
 This is an example of SP metadata. It contains blocks defining how this specific entity will federate with other entities. It contains information such as:
 * `EntityDescriptor`: Defines the entity ID which corresponds to the outside world name.
@@ -323,7 +323,7 @@ This is an example of SP metadata. It contains blocks defining how this specific
 * Service endpoints: Information, such as where assertions should be sent to.
 * `NameID` format: Defines which identifiers are supported and can be sent in the response.
 
-![](images/am401/am-saml-24.png)
+![](images/am-saml-24.png)
 
 This is an example of IdP metadata. It contains blocks defining how this specific entity will federate with other entities. It contains information, such as:
 * `EntityDescriptor`: Defines the entity ID which corresponds to the "outside world" name.
@@ -340,7 +340,7 @@ This is an example of IdP metadata. It contains blocks defining how this specifi
 
 One difference between IdP and SP metadata is the descriptor block that defines the role of the entity. Another difference is within the list of services endpoints that must be provided. **Service endpoints** describe where SAML2 protocol objects, such as SAML2 requests, SAML2 responses, and SAML2 assertions, should be sent. Another difference between metadata for SPs and IdPs is the service endpoints that can be defined. \
 
-![](images/am401/am-saml-25.png)
+![](images/am-saml-25.png)
 
 AM is able to automatically upload SAML2 metadata XML files and generate the corresponding configuration in the Admin UI.
 
@@ -421,9 +421,9 @@ You need to make AM aware of which entities it can work with. To do so, you will
 	</IDPSSODescriptor>
 </EntityDescriptor>
 ```
-![](images/am401/am-saml-26.png)
+![](images/am-saml-26.png)
 
-![](images/am401/am-saml-27.png)
+![](images/am-saml-27.png)
 
 AM lets you create a remote entity either by uploading a metadata XML file, or by making a REST call and providing the metadata in JSON format.
 

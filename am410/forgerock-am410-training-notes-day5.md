@@ -107,7 +107,7 @@ Deployment plan tasks include:
 * Supportability:
   * Creating the runbook for system administrators including procedures for backup and restoration, debugging, change control, and other processes.
 
-![](images/am401/am-install-1.png)
+![](images/am-install-1.png)
 
 ### DS Configurations
 
@@ -118,7 +118,7 @@ External DS instances are recommended for production environments. It is more co
 * The identity store
 * The configuration store
 
-![](images/am401/am-install-2.png)
+![](images/am-install-2.png)
 
 The graphic shows three different ways for storing and managing the AM configuration data stores:
 1. Embedded DS configuration: Stores all the data in the single embedded DS server that is included with an AM installation.
@@ -132,7 +132,7 @@ The graphic shows three different ways for storing and managing the AM configura
 
 ### Deployment Topology
 
-![](images/am401/am-install-3.png)
+![](images/am-install-3.png)
 
 The example topology is a basic starting point for a highly available and scalable AM configuration. The goal is to ensure there is no single point of failure. In this case, the load balancers represent more than one load balancer, possibly in an active-passive configuration, or other forms supported by the load balancer software or hardware used. The load balancer is configured to distribute requests among the AM instances within the site.
 
@@ -238,7 +238,7 @@ All tools trigger the same internal process that controls the deployment of AM.
 
 ### Preparing DS
 
-![](images/am401/am-install-4.png)
+![](images/am-install-4.png)
 
 See https://backstage.forgerock.com/docs/ds/7.1/install-guide/preface.html
 
@@ -253,7 +253,7 @@ AM requires access to the self-signed certificate that DS generates. AM may also
 
 See https://backstage.forgerock.com/docs/am/7.1/install-guide/prepare-trust-store.html
 
-![](images/am401/am-install-5.png)
+![](images/am-install-5.png)
 
 ### Installing
 
@@ -261,16 +261,16 @@ See https://backstage.forgerock.com/docs/am/7.1/install-guide/prepare-trust-stor
 
 Both the web wizard and Amster methods collect input in different ways, and perform the same installation and configuration tasks. Both methods need you to accept the terms and conditions when starting installation. Amster provides a command-line driven approach for installation of AM.
 
-![](images/am401/am-install-6.png)
+![](images/am-install-6.png)
 
-![](images/am401/am-install-7.png)
+![](images/am-install-7.png)
 
 * Server URL: The server URL is the FQDN of the server. The server name should be resolvable through DNS services or through the `/etc/hosts` file.
 * Cookie Domain: The cookie domain is optional. An empty cookie domain creates a host-only cookie. Otherwise, a cookie domain value must be a DNS domain or subdomain under the AM server FQDN. Setting a domain cookie allows any host in the specified domain, and any of its subdomains, to receive a cookie. If the cookie domain is different to the domain used to access AM, then the AM administrator is unable to log in to the AM console.
 * Platform Locale: The default value is `en_US`.
 * Configuration Directory: The path to a configuration directory that AM uses to store its persistent information. If you use the embedded DS as a configuration store, then the embedded DS instance is created within the specified folder. The configuration directory specified also contains the AM log and debug files, and must be writable by the user's account under which the container is running.
 
-![](images/am401/am-install-8.png)
+![](images/am-install-8.png)
 
 On the Configuration Store settings page, choose one of the following two options before entering the connection details:
 * Embedded DS, the default option.
@@ -278,7 +278,7 @@ On the Configuration Store settings page, choose one of the following two option
 
 See https://backstage.forgerock.com/docs/am/7.1/install-guide/configure-sites.html#add-servers-to-site
 
-![](images/am401/am-install-9.png)
+![](images/am-install-9.png)
 
 When you select the New deployment option in the Configuration Store page (the previous step), the User Store page is displayed to configure where AM looks for user identities. AM must have write access to the directory service chosen, and adds to the directory schema needed for AM to manage access for users. For production implementations it is common for the administrator to select the Embedded User Data Store option, and then perform the following additional actions:
 * Create a sub realm in AM, and add the external user store to the sub realm.
@@ -287,7 +287,7 @@ When you select the New deployment option in the Configuration Store page (the p
   * The default `demo` user account from the embedded user store configured in the top-level realm, or
   * The embedded data store from the top-level realm as well.
 
-![](images/am401/am-install-10.png)
+![](images/am-install-10.png)
 
 The Site Configuration page configures a site name and a URL for a load balancer that is used to balance requests across multiple AM servers. When you deploy multiple servers, AM automatically enables session high availability. By default, AM is configured to store session data in a CTS DS service that is shared by multiple AM servers. If an AM server fails, the shared storage means that other AM servers in the deployment:
 * Have access to the user's session data.
@@ -318,31 +318,31 @@ Installing and configuring AM is usually straightforward. However, occasionally 
 * Downloaded from backstage.forgerock.com.
 * Installed by unzipping the Amster .zip archive file into an empty directory.
 
-![](images/am401/am-install-11.png)
+![](images/am-install-11.png)
 
-![](images/am401/am-install-12.png)
+![](images/am-install-12.png)
 
-![](images/am401/am-install-13.png)
+![](images/am-install-13.png)
 
 There are a heap of `cfg` options that can also be specified, e.g. `cfgStoreDirMgrPwd` and `cfgStoreHost` to connect to an external FR DS.
 
-![](images/am401/am-install-14.png)
+![](images/am-install-14.png)
 
 See https://backstage.forgerock.com/docs/amster/7.1/entity-reference/preface.html
 
-![](images/am401/am-install-15.png)
+![](images/am-install-15.png)
 
-![](images/am401/am-install-16.png)
+![](images/am-install-16.png)
 
 See https://backstage.forgerock.com/docs/amster/7.1/entity-reference/preface.html
 
 Amster can export all the configuration related to an AM instance, and import it back to the same instance, or a different one. Note that Amster only manages configuration data. User information in data stores is not imported or exported, or modified in any way by Amster.
 
-![](images/am401/am-install-17.png)
+![](images/am-install-17.png)
 
 ### Bootstrap Process
 
-![](images/am401/am-install-18.png)
+![](images/am-install-18.png)
 
 The AM bootstrap process steps are:
 1. AM looks for the .openamcfg folder, located in the `$HOME` folder of the user running the AM container.
@@ -354,9 +354,9 @@ The AM bootstrap process steps are:
 
 In the home directory of the user running the Java EE container process, a folder called `.openamcfg` is created when AM is installed the first time. For each AM instance installed, the `.openamcfg` folder contains a deployment file that contains the configuration folder specified when the AM instance was installed.
 
-![](images/am401/am-install-19.png)
+![](images/am-install-19.png)
 
-![](images/am401/am-install-20.png)
+![](images/am-install-20.png)
 
 The AM configuration folder structure contains the following folders and their contents:
 * `config`: Contains the boot.json file, and a subfolder structure with property files, such as the log4j.properties file.
@@ -381,13 +381,13 @@ AM also requires a DS for the configuration store to storage AM configuration. T
 
 The AM instance you install in this lesson is the first server you create for a cluster configuration. The initial architecture of the AM installation topology is shown in the following diagram:
 
-![](images/am401/am-install-21.png)
+![](images/am-install-21.png)
 
 ## Lesson 1 - Upgrading AM
 
 ### Versions
 
-![](images/am401/am-upgrade-1.png)
+![](images/am-upgrade-1.png)
 
 You can migrate AM from `5.5.x` versions and later to AM `7.1`.
 
@@ -431,9 +431,9 @@ Upgrade steps for single AM instances:
 * Access AM, such as https://am.example.com/am and follow the upgrade instructions in the web wizard, or use the command-line configuration tool.
 * Restart AM.
 
-![](images/am401/am-upgrade-2.png)
+![](images/am-upgrade-2.png)
 
-![](images/am401/am-upgrade-3.png)
+![](images/am-upgrade-3.png)
 
 You can upgrade with the GUI or a CLI tool.
 
@@ -468,7 +468,7 @@ It is not enough to back up a deployment. You must be able to restore it. That s
 * Create your own signing keys, instead of using default test keys provided in AM.
 * Audit access and configuration changes.
 
-![](images/am401/am-hardening-1.png)
+![](images/am-hardening-1.png)
 
 * Enforce secure connections and use a reverse proxy (IG or a load balancer) to protect specified URLs.
 * Control access by network address.
@@ -486,7 +486,7 @@ Recommended changes are:
 * Set the list of valid `goto` and `gotoOnFail` URLs.
 * Secure access by tidying up trees (modules, and chains too, if any).
 
-![](images/am401/am-hardening-2.png)
+![](images/am-hardening-2.png)
 
 URLs can be relative to AM's URL, or absolute. By default, AM trusts all relative URLs and those absolute URLs that are in the same scheme, FQDN, and port as AM. This increases security against possible phishing attacks through open redirect.
 
@@ -544,7 +544,7 @@ The public key is embedded into a digital certificate along with additional info
 
 A private key and digital certificate provide an identity for the application. The data embedded in a digital certificate is verified by a trusted CA and digitally signed with the CA digital certificate.
 
-![](images/am401/am-hardening-3.png)
+![](images/am-hardening-3.png)
 
 ### Secrets
 
@@ -560,7 +560,7 @@ Secrets (aliases) are managed by:
 
 ### Keystores
 
-![](images/am401/am-hardening-4.png)
+![](images/am-hardening-4.png)
 
 To store keys or secrets, AM uses:
 * The AM keystore is used by some features, such as starting up AM. It can be configured globally (for all instances in a deployment), or per individual server.
@@ -614,28 +614,28 @@ For production deployments, generate a new keystore with the key aliases you nee
 * Key aliases are not migrated from one keystore to another when changing the keystore configuration. Prepare the new keystore before configuring it.
 * Restart AM if you make keystore changes, such as adding or removing keys, or modifying key or keystore passwords.
 
-![](images/am401/am-hardening-8.png)
+![](images/am-hardening-8.png)
 
-![](images/am401/am-hardening-9.png)
+![](images/am-hardening-9.png)
 
-![](images/am401/am-hardening-10.png)
+![](images/am-hardening-10.png)
 
 Mapping secret IDs to an alias is supported by keystore and HSM secret store types.
 
-![](images/am401/am-hardening-11.png)
+![](images/am-hardening-11.png)
 
 ### Key Resolution
 
-![](images/am401/am-hardening-5.png)
+![](images/am-hardening-5.png)
 
 Stores can be configured per realm or globally, but the realm configuration takes precedence. AM resolves secrets in the following order:
 * Any secret store configured for the realm, regardless of type.
 * Any secret store configured globally, regardless of type.
   * If the key alias is not found, AM logs an error and the operation (for example, signing a client-based session token).
 
-![](images/am401/am-hardening-6.png)
+![](images/am-hardening-6.png)
 
-![](images/am401/am-hardening-7.png)
+![](images/am-hardening-7.png)
 
 ### Default AM Keystore
 
@@ -656,7 +656,7 @@ To validate an ID token received from an OIDC Authorization Code grant type flow
 
 https://jwt.davetonge.co.uk can be used to validate JWT after exposing the public end points.
 
-![](images/am401/am-hardening-12.png)
+![](images/am-hardening-12.png)
 
 http://am.example.com:8080/am/encode.jsp can be used to create an encrypted secret for an AM secret store.
 
@@ -682,7 +682,7 @@ Some features of auditing are:
 * Data management: Log rotation and retention policies.
 * Blacklisting sensitive fields: For example, headers or cookies. Reverse DNS lookup: For network troubleshooting purposes.
 
-![](images/am401/am-audit-1.png)
+![](images/am-audit-1.png)
 
 AM supports the types of audit event handlers as per the table above. See https://backstage.forgerock.com/docs/am/7.1/security-guide/implementing-audit.html#configuring-audit-event-handlers
 
@@ -729,7 +729,7 @@ See https://backstage.forgerock.com/docs/am/7.1/maintenance-guide/monitoring-am.
 * CREST: AM REST API that exposes information about AM, in JSON format.
 * Graphite: AM pushes metrics data to the Graphite server.
 
-![](images/am401/am-monitoring-1.png)
+![](images/am-monitoring-1.png)
 
 AM contains a monitoring framework that makes configuration and operational information available to AM administrators. AM exposes a ForgeRock Common REST (CREST) metrics API and Prometheus metrics endpoints. The CREST API can be queried by any REST client and the Prometheus endpoint can be queried by a Prometheus server.
 
@@ -745,13 +745,13 @@ When the name of the cookie is changed on a production system, you invalidate th
 
 For some organizations, having a system up and running at all times is fundamental. Ensuring high availability goals can be achieved by eliminating single points of failure and detecting failures immediately.
 
-![](images/am401/am-cluster-1.png)
+![](images/am-cluster-1.png)
 
 You could start with an evaluation instance of AM, and then make appropriate configuration changes to the AM instance to prepare it as the first instance of a cluster for a highly available architecture. Part of the preparation would involve migrating the embedded DS to one or more external DS stores.
 
 It is recommended that you start by installing your first AM instance with one or more external DS instances as the basis for creating a production-ready cluster.
 
-![](images/am401/am-cluster-2.png)
+![](images/am-cluster-2.png)
 
 The diagram illustrates an acceptable basis for a single instance in production. In this case, if one component fails, the whole deployment will be down. However, this topology is easier to scale horizontally to eliminate single points of failure.
 
@@ -759,7 +759,7 @@ The diagram illustrates an acceptable basis for a single instance in production.
 * Identity data is more dynamic.
 * CTS data is typically volatile (long-and short-lived).
 
-![](images/am401/am-cluster-3.png)
+![](images/am-cluster-3.png)
 
 To avoid a single point of failure and ensure high availability, all the components of the solution must be duplicated.
 
@@ -767,7 +767,7 @@ AM instances will be put behind a load balancer, which will spread the load even
 
 Similarly, the directory stores should be duplicated; however, do not use a load balancer in front of your directories. The issue is that all the data and all the updates must be replicated between the directory servers.
 
-![](images/am401/am-cluster-4.png)
+![](images/am-cluster-4.png)
 
 This is basic deployment architecture that is designed for high availability, by ensuring no single point of failure for AM and DS instances in the topology. The architecture can be extended for more redundancy and higher availability, by adding:
 * More DS instances in the replication architecture for the configuration, CTS, and identity stores.
@@ -781,7 +781,7 @@ Scalability is the capability of a system to handle growing loads, and its poten
 
 AM is a good candidate for horizontal scaling. Use two or more AM instances to provide availability, and implement horizontal scalability.
 
-![](images/am401/am-cluster-5.png)
+![](images/am-cluster-5.png)
 
 Scalability for AM is achieved horizontally by adding more servers to a deployment. However, a scalability bottleneck can occur as demand to access the active CTS is increased. More AM servers mean that more sessions need to be retrieved and updated in the CTS. However, the CTS cannot be scaled horizontally and can lead to a situation where performance degrades due to load on the active CTS. 3 possible solutions:
 1. Connect each AM instance to a unique CTS, which becomes the active CTS for the associated AM server, to ensure high availability with an active-passive mechanism.
@@ -789,11 +789,11 @@ Scalability for AM is achieved horizontally by adding more servers to a deployme
 3. Enabling client-based sessions.
   1. Make sure black listed sessions is on. This is for logged out user sessions and makes sure logged out users can't get access unless they log back in.
 
-![](images/am401/am-cluster-6.png)
+![](images/am-cluster-6.png)
 
 Affinity deployments are well suited for deployments with many AM servers. In an affinity deployment, AM balances LDAP requests across one or more DS instances. Without this,  AM always routes LDAP requests for a specific CTS token to the same DS.
 
-![](images/am401/am-cluster-7.png)
+![](images/am-cluster-7.png)
 
 Client-based sessions are not persisted in the CTS. Sessions are stored in a token sent to the client as a JWT. Therefore, any server can deal with the session without the need to read it from the CTS. Some things not available with client sessions:
 * It is not possible to terminate a client-based session before its expiry time.
@@ -807,17 +807,17 @@ Client-based sessions are not persisted in the CTS. Sessions are stored in a tok
 * Session management by using the AM Admin UI
 * Session notification
 
-![](images/am401/am-cluster-8.png)
+![](images/am-cluster-8.png)
 
 A site is an AM concept and configurable name that defines a different URL used to access AM instances. The site URL refers to a load balancer with an external DNS name that is different from the one used when the AM instance was installed.
 
 You can create an AM cluster without configuring an AM site. Configuring a site name and assigning the AM servers to a site is optional.
 
-![](images/am401/am-cluster-9.png)
+![](images/am-cluster-9.png)
 
 AM servers manage sessions autonomously. They provide session access and management independently of each other. Sticky sessions may or may not be used.
 
-![](images/am401/am-cluster-10.png)
+![](images/am-cluster-10.png)
 
 Stickiness can be enabled in many load balancers by configuring them to recognise a special cookie that identifies the server to which a request has been routed. Configuring the load balancer to enable session stickiness can make use of the `amlbcookie`, which an AM server adds to response headers as a form of server identification.
 
@@ -840,21 +840,21 @@ Key asks are:
 * Configure the AM Base URL service.
 * Install additional AM instances in the cluster.
 
-![](images/am401/am-cluster-11.png)
+![](images/am-cluster-11.png)
 
-![](images/am401/am-cluster-12.png)
+![](images/am-cluster-12.png)
 
 See https://backstage.forgerock.com/docs/am/7.1/cts-guide/cts-openam-config.html#cts-testing-ha
 
-![](images/am401/am-cluster-13.png)
+![](images/am-cluster-13.png)
 
 ### Labs
 
-![](images/am401/am-cluster-14.png)
+![](images/am-cluster-14.png)
 
-![](images/am401/am-cluster-15.png)
+![](images/am-cluster-15.png)
 
-![](images/am401/am-cluster-16.png)
+![](images/am-cluster-16.png)
 
 Your existing cluster topology has one AM running with an external DS that is replicating its data with a second external DS. You now add a second AM server to the cluster topology, which includes:
 * Deploying the AM `.war` file in the `am2` Tomcat server.
@@ -877,7 +877,7 @@ In many deployments, AM determines the base URL of a provider using the incoming
 
 See https://backstage.forgerock.com/docs/am/7/security-guide/reverse-proxy.html#configure-base-url-provider
 
-![](images/am401/am-cluster-17.png)
+![](images/am-cluster-17.png)
 
 Note that the secondary server configuration is generally best done in the server defaults for the cluster configuration. This means that all the AM instances in the cluster inherit this change. When you modify the CTS configuration, you need to restart all the AM servers in the cluster. However, you need to restart the AM servers after modifying the configuration store and identity store settings.
 
@@ -901,19 +901,19 @@ The configuration provided by the ForgeRock [forgeops](https://github.com/ForgeR
 * Includes a **Cloud Development Kit (CDK)** providing a minimal sample deployment for development purposes.
 * Includes a **Cloud Deployment Model (CDM)** as a reference implementation for cloud deployments.
 
-![](images/am401/am-cloud-1.png)
+![](images/am-cloud-1.png)
 
 The CDK is for developers to quickly deploy the Identity Platform and configure and customize AM and IDM. If you have access to a cluster, you can install the CDK in a namespace on your cluster. However, if you don't have access to a cloud-based cluster, you can deploy the CDK on a local computer running Minikube.
 
-![](images/am401/am-cloud-2.png)
+![](images/am-cloud-2.png)
 
 CDK deployments are suitable for demonstration and proof-of-concept purposes. It is a quick way to get the Identity Platform up and running on Kubernetes.
 
-![](images/am401/am-cloud-3.png)
+![](images/am-cloud-3.png)
 
 The CDM is well-suited for a proof-of-concept deployment that can be used for validation against ForgeRock published benchmarks.
 
-![](images/am401/am-cloud-4.png)
+![](images/am-cloud-4.png)
 
 The CDM deployment basically follows the same deployment procedure as the CDK, with the exception of the Kustomize overlay that is used for the Kubernetes environment. The Kustomize overlays contain different optimizations, sizing, and placing of the Identity Platform components in the target environment.
 
@@ -986,7 +986,7 @@ Change the project default compute engine zone: `gcloud config set compute/zone 
 
 Change the project default compute engine region: `gcloud config set compute/region $NAME`
 
-![](images/am401/am-cloud-5.png)
+![](images/am-cloud-5.png)
 
 Change the current project: `gcloud config set project $PROJECT_ID`. To access the GCP Project Info panel, select the Google Console VM and in the GCP console (if signed in), select the GCP navigation menu > Home
 
@@ -994,7 +994,7 @@ Authenticate with Googe Cloud SDK: `gcloud auth login $EMAIL`
 
 To display your current GCP project ID and zone values: `gcloud info --format="text(config.project,config.properties.compute)"`
 
-![](images/am401/am-cloud-6.png)
+![](images/am-cloud-6.png)
 
 View your project's external IP: `gcloud compute addresses list` or `gcloud compute addresses list --format="text (address)"`
 
