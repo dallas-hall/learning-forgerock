@@ -2,11 +2,15 @@
 
 - [ForgeRock Training](#forgerock-training)
   - [INTRODUCTION MODULE](#introduction-module)
-  - [ACCESS MANAGEMENT ESSENTIALS](#access-management-essentials)
-  - [Access Management Deep Dive (AM410)](#access-management-deep-dive-am410)
-  - [IDENTITY MANAGEMENT ESSENTIALS](#identity-management-essentials)
-  - [DIRECTORY SERVICES ESSENTIALS](#directory-services-essentials)
-  - [IDENTITY GATEWAY ESSENTIALS](#identity-gateway-essentials)
+  - [ACCESS MANAGEMENT](#access-management)
+    - [ESSENTIALS](#essentials)
+    - [Deep Dive (AM410)](#deep-dive-am410)
+  - [IDENTITY MANAGEMENT](#identity-management)
+    - [ESSENTIALS](#essentials-1)
+  - [DIRECTORY SERVICES](#directory-services)
+    - [ESSENTIALS](#essentials-2)
+  - [IDENTITY GATEWAY](#identity-gateway)
+    - [ESSENTIALS](#essentials-3)
 
 Training can be found at https://backstage.forgerock.com/university/cloud-learning
 
@@ -50,23 +54,31 @@ The new version uses Prometheus and Grafana for monitoring. You can view this st
 
 ![images/prometheus-and-grafana-stack.png](images/prometheus-and-grafana-stack.png)
 
-## ACCESS MANAGEMENT ESSENTIALS
+## ACCESS MANAGEMENT
+
+### ESSENTIALS
 
 Can be viewed at [forgerock-am-training-notes.md](forgerock-am-training-notes.md)
 
-## Access Management Deep Dive (AM410)
+### Deep Dive (AM410)
 
 Can be viewed at [am410/README.md](am410/README.md)
 
-## IDENTITY MANAGEMENT ESSENTIALS
+## IDENTITY MANAGEMENT
+
+### ESSENTIALS
 
 Can be viewed at [forgerock-im-training-notes.md](forgerock-im-training-notes.md)
 
-## DIRECTORY SERVICES ESSENTIALS
+## DIRECTORY SERVICES
+
+### ESSENTIALS
 
 Can be viewed at [forgerock-ds-training-notes.md](forgerock-ds-training-notes.md)
 
-## IDENTITY GATEWAY ESSENTIALS
+## IDENTITY GATEWAY
+
+### ESSENTIALS
 
 Can be viewed at [forgerock-ig-training-notes.md](forgerock-ig-training-notes.md)
 
